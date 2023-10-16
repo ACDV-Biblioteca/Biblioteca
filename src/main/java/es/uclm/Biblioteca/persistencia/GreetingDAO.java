@@ -6,9 +6,17 @@ import es.uclm.Biblioteca.domain.entities.Greeting;
 
 @Repository
 public interface GreetingDAO extends JpaRepository<Greeting, Long> {
-	/*
-	 * * Se hereda de JpaRepository operaciones de acceso a datos comunes a todas
-	 * las entidades: * E save(E) * List<E> saveAll(List<E>) * List<E> findAll() * E
-	 * findById(id) * delete(E) * deleteById(id) * ... * * Aquí se podrían definir
-	 * consultas de selección más específicas y complejas
-	 **/ }
+/*
+* Se hereda de JpaRepository operaciones de acceso a datos comunes a todas las
+entidades:
+* E save(E)
+* List<E> saveAll(List<E>)
+* List<E> findAll()
+* E findById(id)
+* delete(E)
+* deleteById(id)
+* ...
+*
+* Aquí se podrían definir consultas de selección más específicas y complejas
+**/
+}
