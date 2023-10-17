@@ -1,12 +1,12 @@
 ----------------------------------------------------------------
-Mon Oct 16 18:42:48 CEST 2023:
-Booting Derby version The Apache Software Foundation - Apache Derby - 10.16.1.1 - (1901046): instance a816c00e-018b-395e-5e9d-000001c01600 
-on database directory C:\Users\david\OneDrive\Escritorio\Curso 23-24\ISO II\ProyectoBiblioteca\Biblioteca\database with class loader jdk.internal.loader.ClassLoaders$AppClassLoader@76ed5528 
-Loaded from file:/C:/Users/david/.m2/repository/org/apache/derby/derby/10.16.1.1/derby-10.16.1.1.jar
+Tue Oct 17 11:03:00 CEST 2023:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.16.1.1 - (1901046): instance a816c00e-018b-3cdf-c551-00000213ec80 
+on database directory C:\Users\Victo\git\Biblioteca\database with class loader jdk.internal.loader.ClassLoaders$AppClassLoader@2a139a55 
+Loaded from file:/C:/Users/Victo/.m2/repository/org/apache/derby/derby/10.16.1.1/derby-10.16.1.1.jar
 java.vendor=Oracle Corporation
-java.runtime.version=21+35-LTS-2513
-user.dir=C:\Users\david\OneDrive\Escritorio\Curso 23-24\ISO II\ProyectoBiblioteca\Biblioteca
-os.name=Windows 11
+java.runtime.version=17.0.3+8-LTS-111
+user.dir=C:\Users\Victo\git\Biblioteca
+os.name=Windows 10
 os.arch=amd64
 os.version=10.0
 derby.system.home=null
