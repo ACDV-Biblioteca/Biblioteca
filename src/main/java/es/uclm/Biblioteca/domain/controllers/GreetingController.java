@@ -13,20 +13,22 @@ import es.uclm.Biblioteca.persistencia.GreetingDAO;
 
 @Controller
 public class GreetingController {
-	private static final Logger log= LoggerFactory.getLogger(GreetingController.class);
+	private static final Logger log = LoggerFactory.getLogger(GreetingController.class);
 	@Autowired
 	private GreetingDAO greetingDAO;
-	@GetMapping("/greeting") 
+	@GetMapping("/greeting")
 	public String greetingForm(Model model) {
-		//model.addAttribute("greeting", new Greeting());
+		model.addAttribute("greeting", new Greeting());
 		log.info(greetingDAO.findAll().toString());
-		return "greeting"; }
-
+		return "greeting";
+	}
 	@PostMapping("/greeting")
 	public String greetingSubmit(@ModelAttribute Greeting greeting, Model model) {
 		model.addAttribute("greeting", greeting);
-		Greeting savedGreeting= greetingDAO.save(greeting); 
-		log.info("Savedgreeting: "+ savedGreeting);
+		Greeting savedGreeting = greetingDAO.save(greeting);
+		log.info("Saved greeting: " + savedGreeting);
+		greetingDAO.delete(greeting);
+
 		return "result";
 	}
 }
