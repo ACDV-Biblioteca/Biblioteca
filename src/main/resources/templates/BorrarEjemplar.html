@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org">
+<head>
+   	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Borrar Ejemplar</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+        .message {
+            color: green;
+            display: none;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Borrar Ejemplar</h2>
+<div>
+	<form action="#" th:action="@{/BorrarEjemplar}" th:object="${Ejemplar}" method="post">
+	<label for="ejemplarId">Introduce el ID del ejemplar: </label>
+    <p>id: <input type="text" th:field="*{id}" placeholder="ID del ejemplar" /></p>
+    </form>
+    <button onclick="bajaEjemplar()">Borrar</button>
+    
+
+    
+</div>
+<p class="message" id="message">El ejemplar ha sido borrado correctamente.</p>
+
+
+
+</body>
+</html>
