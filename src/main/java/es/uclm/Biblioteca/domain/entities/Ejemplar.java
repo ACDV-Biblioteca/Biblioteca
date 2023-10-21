@@ -11,38 +11,30 @@ public class Ejemplar {
 
 	}
 
-	public Ejemplar(Titulo titulo, String id) {
+	public Ejemplar(int titulo, int id) {
 		super();
 		this.titulo = titulo;
 		this.id = id;
 	}
 
-	public Ejemplar(String titulo, String id) {
-		super();
-		this.t = titulo;
-		this.id = id;
-	}
-	@ManyToOne(targetEntity=Titulo.class)
-	Titulo titulo;
-
 	@Id
-	private String id;
-	@Column
-	private String t;
+	private int id;
 
-	public Titulo getTitulo() {
+	private int titulo;
+
+	public int getTitulo() {
 		return titulo;
 	}
 
-	public void setTitulo(Titulo titulo) {
+	public void setTitulo(int titulo) {
 		this.titulo = titulo;
 	}
 
-	public String getId() {
+	public int getId() {
 		return id;
 	}
 
-	public void setId(String id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 
