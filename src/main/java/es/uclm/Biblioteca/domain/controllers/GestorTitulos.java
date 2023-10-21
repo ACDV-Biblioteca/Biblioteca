@@ -1,8 +1,14 @@
 package es.uclm.Biblioteca.domain.controllers;
 
 import es.uclm.Biblioteca.persistencia.*;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.ui.Model;
 import es.uclm.Biblioteca.domain.entities.*;
 
+@Controller
 public class GestorTitulos {
 
 	TituloDAO tituloDAO;
@@ -51,9 +57,11 @@ public class GestorTitulos {
 	 * 
 	 * @param t
 	 */
-	public void bajaEjemplar(Titulo t) {
+	@GetMapping("/BorrarEjemplar")
+	public String bajaEjemplar(@ModelAttribute Titulo t,Model model) {
 		// TODO - implement GestorTitulos.bajaEjemplar
-		throw new UnsupportedOperationException();
+		model.addAttribute("Ejemplar", new Ejemplar());
+		return "BorrarEjemplar";
 	}
 
 }
