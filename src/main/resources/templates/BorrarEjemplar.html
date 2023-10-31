@@ -25,7 +25,7 @@
 <div>
 	<form action="#" th:action="@{/BorrarEjemplar}" th:object="${Ejemplar}" method="post">
 	<label for="ejemplarId">Introduce el ID del ejemplar: </label>
-    <p>id: <input type="number" th:field="*{id}" placeholder="ID del ejemplar" /></p>
+    <p>id: <input type="number" th:field="*{titulo}" placeholder="ID del ejemplar" /></p>
     <input type="submit" value="Borrar" />
     
         </form>

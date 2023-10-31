@@ -2,6 +2,7 @@ package es.uclm.Biblioteca.domain.controllers;
 
 import es.uclm.Biblioteca.persistencia.*;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,10 +17,10 @@ import es.uclm.Biblioteca.domain.entities.*;
 public class GestorTitulos {
 
 	TituloDAO tituloDAO;
-	
+
 	@Autowired
 	private EjemplarDAO ejemplarDAO;
-	
+
 	AutorDAO autorDAO;
 
 	/**
@@ -66,29 +67,34 @@ public class GestorTitulos {
 	 */
 	@GetMapping("/BorrarEjemplar")
 	public String showBorrarEjemplarPage(Model model) {
-	    model.addAttribute("Ejemplar", new Ejemplar());
-	    return "BorrarEjemplar";
+		model.addAttribute("Ejemplar", new Ejemplar());
+		return "BorrarEjemplar";
 	}
 
 	@PostMapping("/BorrarEjemplar")
 	public String bajaEjemplar(@ModelAttribute Ejemplar ejemplar, Model model) {
-	    // Buscar el Ejemplar por ID
-	    Optional<Ejemplar> ejemplarOpt = ejemplarDAO.findById(ejemplar.getId());
+		// Buscar el Ejemplar por ID
+		
+		//Optional<Ejemplar> ejemplarOpt = ejemplarDAO.findById(ejemplar.getId());
+		List<Ejemplar> ejemplarOpt2= ejemplarDAO.findByIsbn(ejemplar.getTitulo());
+		
+		// Si el Ejemplar existe, eliminarlo
+		if (!ejemplarOpt2.isEmpty()) {
+			
+			//ejemplarDAO.delete(ejemplarOpt.get());
+			
+			// Puedes agregar un mensaje de confirmación si lo deseas
+			model.addAttribute("message", ejemplarOpt2.toString());
+			
+			System.out.println(ejemplarOpt2.toString());
+		} else {
+			// Manejar el caso en el que el Ejemplar no se encuentra
 
-	    // Si el Ejemplar existe, eliminarlo
-	    if(ejemplarOpt.isPresent()) {
-	        ejemplarDAO.delete(ejemplarOpt.get());
-	        // Puedes agregar un mensaje de confirmación si lo deseas
-	        model.addAttribute("message", "El ejemplar ha sido borrado correctamente.");
-	    } else {
-	        // Manejar el caso en el que el Ejemplar no se encuentra
+			model.addAttribute("message", "No se encontró el ejemplar con ese ID.");
 
-	        model.addAttribute("message", "No se encontró el ejemplar con ese ID.");
-	       
-	    }
+		}
 
-	    return "BorrarEjemplar";
+		return "BorrarEjemplar";
 	}
-
 
 }

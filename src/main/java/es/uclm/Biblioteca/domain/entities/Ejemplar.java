@@ -11,23 +11,23 @@ public class Ejemplar {
 
 	}
 
-	public Ejemplar(int titulo, int id) {
+	public Ejemplar(int isbn_titulo, int id) {
 		super();
-		this.titulo = titulo;
+		this.isbn_titulo = isbn_titulo;
 		this.id = id;
 	}
 
 	@Id
 	private int id;
-
-	private int titulo;
+	@Column
+	private int isbn_titulo;
 
 	public int getTitulo() {
-		return titulo;
+		return isbn_titulo;
 	}
 
 	public void setTitulo(int titulo) {
-		this.titulo = titulo;
+		this.isbn_titulo = titulo;
 	}
 
 	public int getId() {
@@ -40,7 +40,7 @@ public class Ejemplar {
 
 	@Override
 	public String toString() {
-		return String.format("Ejemplar [id=%s, titulo=%s]", id, titulo);
+		return String.format("Ejemplar [id=%s, titulo=%s]", id, isbn_titulo);
 	}
 
 }

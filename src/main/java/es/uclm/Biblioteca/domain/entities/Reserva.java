@@ -15,6 +15,7 @@ public class Reserva {
 	@ManyToOne(targetEntity=Titulo.class)
 
 	Titulo titulo;
+	
 	private Date fecha;
 
 }

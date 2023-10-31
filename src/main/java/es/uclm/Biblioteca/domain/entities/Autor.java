@@ -7,12 +7,12 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 @Entity
 public class Autor {
-	@ManyToOne(targetEntity=Titulo.class)
+	/*@ManyToOne(targetEntity=Titulo.class)
 
-	Collection<Titulo> titulos;
+	Collection<Titulo> titulos;*/
 	@Id
-	private int id;
 	private String nombre;
-	private String apellido;
+	@Id
+	private String apellidos;
 
 }
