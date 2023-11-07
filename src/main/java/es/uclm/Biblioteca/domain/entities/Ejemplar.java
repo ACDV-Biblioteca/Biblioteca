@@ -1,33 +1,42 @@
 package es.uclm.Biblioteca.domain.entities;
 
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 
 @Entity
+@Table(name = "Ejemplar")
 public class Ejemplar {
 	public Ejemplar() {
 
 	}
 
-	public Ejemplar(int isbn_titulo, int id) {
+	public Ejemplar( int id,Titulo titulo) {
 		super();
-		this.isbn_titulo = isbn_titulo;
+		this.titulo = titulo;
 		this.id = id;
 	}
 
 	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
-	@Column
-	private int isbn_titulo;
 
-	public int getTitulo() {
-		return isbn_titulo;
+	@ManyToOne
+	@JoinColumn(name = "isbn_titulo") 
+	
+	private Titulo titulo;
+
+	public Titulo getTitulo() {
+		return titulo;
 	}
 
-	public void setTitulo(int titulo) {
-		this.isbn_titulo = titulo;
+	public void setTitulo(Titulo titulo) {
+		this.titulo = titulo;
 	}
 
 	public int getId() {
@@ -40,7 +49,7 @@ public class Ejemplar {
 
 	@Override
 	public String toString() {
-		return String.format("Ejemplar [id=%s, titulo=%s]", id, isbn_titulo);
+		return String.format("Ejemplar [id=%s, titulo=%s]", id, titulo);
 	}
 
 }
