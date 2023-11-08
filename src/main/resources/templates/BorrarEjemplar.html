@@ -14,7 +14,6 @@
         }
         .message {
             color: black;
-            display: none;
             margin-top: 10px;
         }
     </style>
@@ -23,15 +22,15 @@
 
 <h2>Borrar Ejemplar</h2>
 <div>
-	<form action="#" th:action="@{/BorrarEjemplar}" th:object="${Ejemplar}" method="post">
-	<label for="ejemplarId">Introduce el ID del ejemplar: </label>
-    <p>id: <input type="number" th:field="*{titulo}" placeholder="ID del ejemplar" /></p>
+	<form action="#" th:action="@{/BorrarEjemplar}" th:object="${ejemplar}" method="post">
+	<label for="ejemplarId">Introduce el Isbn del titulo para borrar el Ejemplar: </label>
+    <p>ISBN: <input type="number" th:field="*{ejemplar_isbn}" placeholder="Isbn del titulo" /></p>
     <input type="submit" value="Borrar" />
+    <p class="message" th:if="${message}" th:text="${message}" id="message"></p>
     
-        </form>
+     </form>
     
 
-<p class="message" th:if="${message}" th:text="${message}" id="message"></p>
     
 </div>
 

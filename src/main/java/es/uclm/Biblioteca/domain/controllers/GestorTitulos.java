@@ -4,6 +4,9 @@ import es.uclm.Biblioteca.persistencia.*;
 
 import java.util.List;
 import java.util.Optional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -15,7 +18,7 @@ import es.uclm.Biblioteca.domain.entities.*;
 
 @Controller
 public class GestorTitulos {
-
+	private static final Logger log = LoggerFactory.getLogger(GestorTitulos.class);
 	TituloDAO tituloDAO;
 
 	@Autowired
@@ -67,30 +70,48 @@ public class GestorTitulos {
 	 */
 	@GetMapping("/BorrarEjemplar")
 	public String showBorrarEjemplarPage(Model model) {
-		model.addAttribute("Ejemplar", new Ejemplar());
+		model.addAttribute("ejemplar", new Ejemplar());
+		model.addAttribute("message", ""); // Inicializa el mensaje como vacío
+
 		return "BorrarEjemplar";
 	}
 
 	@PostMapping("/BorrarEjemplar")
 	public String bajaEjemplar(@ModelAttribute Ejemplar ejemplar, Model model) {
-		// Buscar el Ejemplar por ID
-		
-		//Optional<Ejemplar> ejemplarOpt = ejemplarDAO.findById(ejemplar.getId());
-		List<Ejemplar> ejemplarOpt2= ejemplarDAO.findByIsbn(ejemplar.getTitulo());
-		
+		model.addAttribute("ejemplar", ejemplar);
+
+		List<Ejemplar> ejemplarOpt2 = ejemplarDAO.findByIsbn(ejemplar.getEjemplar_isbn());
+
 		// Si el Ejemplar existe, eliminarlo
 		if (!ejemplarOpt2.isEmpty()) {
-			
-			//ejemplarDAO.delete(ejemplarOpt.get());
-			
-			// Puedes agregar un mensaje de confirmación si lo deseas
-			model.addAttribute("message", ejemplarOpt2.toString());
-			
-			System.out.println(ejemplarOpt2.toString());
+			if (ejemplarOpt2.size() == 1) {
+				ejemplarDAO.delete(ejemplarOpt2.get(ejemplarOpt2.size() - 1));
+
+				log.info("Se ha borrado el ejemplar " + ejemplarOpt2.get(ejemplarOpt2.size() - 1).getId()
+						+ " con titulo " + ejemplarOpt2.get(ejemplarOpt2.size() - 1).getTitulo().getTitulo());
+				model.addAttribute("message",
+						"Se ha borrado el ejemplar " + ejemplarOpt2.get(ejemplarOpt2.size() - 1).getId()
+								+ " con titulo " + ejemplarOpt2.get(ejemplarOpt2.size() - 1).getTitulo().getTitulo());
+				Titulo titulo = new Titulo();
+				titulo.setIsbn(ejemplar.getEjemplar_isbn());
+				borrarTitulo(titulo);
+
+			} else {
+				ejemplarDAO.delete(ejemplarOpt2.get(ejemplarOpt2.size() - 1));
+				model.addAttribute("message",
+						"Se ha borrado el ejemplar " + ejemplarOpt2.get(ejemplarOpt2.size() - 1).getId()
+								+ " con titulo " + ejemplarOpt2.get(ejemplarOpt2.size() - 1).getTitulo().getTitulo());
+
+				log.info("Se ha borrado el ejemplar " + ejemplarOpt2.get(ejemplarOpt2.size() - 1).getId()
+						+ " con titulo " + ejemplarOpt2.get(ejemplarOpt2.size() - 1).getTitulo().getTitulo());
+
+			}
+
 		} else {
 			// Manejar el caso en el que el Ejemplar no se encuentra
 
-			model.addAttribute("message", "No se encontró el ejemplar con ese ID.");
+			model.addAttribute("message", "No se encontró el ejemplar con ese ISBN.");
+			log.info("Este ejemplar no existe");
 
 		}
 
