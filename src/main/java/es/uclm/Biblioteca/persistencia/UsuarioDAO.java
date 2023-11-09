@@ -1,28 +1,14 @@
 package es.uclm.Biblioteca.persistencia;
 
-public class UsuarioDAO extends EntityDAO {
+import java.util.List;
 
-	@Override
-	public Object select(String id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-	@Override
-	public int insert(Object entity) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+import es.uclm.Biblioteca.domain.entities.Usuario;
 
-	@Override
-	public int update(Object entity) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+@Repository
+public interface UsuarioDAO extends JpaRepository<Usuario, Integer>{
+	
 
-	@Override
-	public int delete(Object entity) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
 }

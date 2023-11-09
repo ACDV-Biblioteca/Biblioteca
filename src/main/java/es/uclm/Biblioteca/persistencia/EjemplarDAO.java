@@ -16,5 +16,6 @@ import es.uclm.Biblioteca.domain.entities.Titulo;
 public interface EjemplarDAO extends JpaRepository<Ejemplar, Integer>{
 	@Query(value = "SELECT * FROM DERBYUSER.ejemplar WHERE ISBN_TITULO =?", nativeQuery = true)
 	public List<Ejemplar> findByIsbn(Long ejemplar_isbn);
-
+	@Query(value = "SELECT * FROM Ejemplar e WHERE NOT EXISTS (SELECT 1 FROM Prestamo p WHERE p.ejemplar_id = e.id) AND e.isbn_titulo = ?", nativeQuery = true)
+	public List<Ejemplar> findByIsbnNoPrestados(Long isbn);
 }

@@ -1,28 +1,19 @@
 package es.uclm.Biblioteca.persistencia;
 
-public class PrestamoDAO extends EntityDAO {
+import java.util.List;
 
-	@Override
-	public Object select(String id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 
-	@Override
-	public int insert(Object entity) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+import es.uclm.Biblioteca.domain.entities.Ejemplar;
+import es.uclm.Biblioteca.domain.entities.Prestamo;
 
-	@Override
-	public int update(Object entity) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+@Repository
+public interface PrestamoDAO extends JpaRepository<Prestamo, Integer>{
+	@Query(value="SELECT COUNT(*) FROM Prestamo WHERE usuario_id = ?", nativeQuery = true)
+	public int findCountPrestamosUsuario(int usuario_id);
+	
 
-	@Override
-	public int delete(Object entity) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+
 }
