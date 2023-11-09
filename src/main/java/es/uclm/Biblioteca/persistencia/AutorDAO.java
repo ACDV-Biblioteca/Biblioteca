@@ -2,7 +2,7 @@ package es.uclm.Biblioteca.persistencia;
 
 public class AutorDAO extends EntityDAO {
 
-	@Override
+	
 	public Object select(String id) {
 		// TODO Auto-generated method stub
 		return null;

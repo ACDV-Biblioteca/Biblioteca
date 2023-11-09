@@ -2,28 +2,80 @@ package es.uclm.Biblioteca.domain.entities;
 
 import java.util.*;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
+
+
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 
 @Entity
+@Table(name = "Titulo")
 public class Titulo {
-	@ManyToOne(targetEntity=Autor.class)
+    @Id
+    private Long isbn;
+    
+    @Column
+    private String titulo;
 
-	Collection<Autor> autores;
-	@ManyToOne(targetEntity=Ejemplar.class)
+    @Column
+    private int numReserva;
 
-	Collection<Ejemplar> ejemplares;
-	@ManyToOne(targetEntity=Prestamo.class)
+    
+    @OneToMany(mappedBy = "titulo")
+    private Collection<TituloAutor> autores;
 
-	Collection<Prestamo> prestamos;
-	@ManyToOne(targetEntity=Reserva.class)
-
-	Collection<Reserva> reservas;
-	private String titulo;
-	private String numReserva;
-
-	@Id
-	private String isbn;
-
+    @OneToMany(mappedBy = "titulo")
+    private Collection<Prestamo> prestamos;
+    @OneToMany(mappedBy = "titulo")
+    private Collection<Reserva> reserva;  
+    @OneToMany(mappedBy = "titulo")
+    private Collection<Ejemplar> ejemplares;
+	public Long getIsbn() {
+		return isbn;
+	}
+	public void setIsbn(Long isbn) {
+		this.isbn = isbn;
+	}
+	public String getTitulo() {
+		return titulo;
+	}
+	public void setTitulo(String titulo) {
+		this.titulo = titulo;
+	}
+	public int getNumReserva() {
+		return numReserva;
+	}
+	public void setNumReserva(int numReserva) {
+		this.numReserva = numReserva;
+	}
+	public Collection<TituloAutor> getAutores() {
+		return autores;
+	}
+	public void setAutores(Collection<TituloAutor> autores) {
+		this.autores = autores;
+	}
+	public Collection<Prestamo> getPrestamos() {
+		return prestamos;
+	}
+	public void setPrestamos(Collection<Prestamo> prestamos) {
+		this.prestamos = prestamos;
+	}
+	public Collection<Reserva> getReserva() {
+		return reserva;
+	}
+	
+	public void setReserva(Collection<Reserva> reserva) {
+		this.reserva = reserva;
+	}
+	public Collection<Ejemplar> getEjemplares() {
+		return ejemplares;
+	}
+	public void setEjemplares(Collection<Ejemplar> ejemplares) {
+		this.ejemplares = ejemplares;
+	}
+    
+    // Getters y setters
 }

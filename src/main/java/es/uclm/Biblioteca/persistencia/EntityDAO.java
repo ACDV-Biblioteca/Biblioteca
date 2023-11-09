@@ -1,6 +1,6 @@
 package es.uclm.Biblioteca.persistencia;
 
-public abstract class EntityDAO<E> {
+public abstract class EntityDAO<E>  {
 
 	/**
 	 * 
