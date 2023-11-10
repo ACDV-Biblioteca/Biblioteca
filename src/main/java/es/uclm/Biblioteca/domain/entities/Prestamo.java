@@ -26,7 +26,9 @@
 	    @JoinColumn(name = "ejemplar_id", referencedColumnName = "id")
 	    private Ejemplar ejemplar;
 
-	    @Id
+	   
+
+		@Id
 	    @ManyToOne
 	    @JoinColumn(name = "usuario_id", referencedColumnName = "id")
 	    private Usuario usuario;
@@ -108,6 +110,11 @@
 	    public void setActivo(Boolean activo) {
 	        this.activo = activo;
 	    }
+	    @Override
+		public String toString() {
+			return "Prestamo [ejemplar=" + ejemplar + ", usuario=" + usuario + ", titulo=" + titulo + ", fechaInicio="
+					+ fechaInicio + ", fechaFin=" + fechaFin + ", activo=" + activo + "]";
+		}
 
 	    // Debes crear una clase estática para la clave primaria compuesta
 	    public static class PrestamoId implements Serializable {
@@ -147,7 +154,7 @@
 	        public void setTitulo(Titulo titulo) {
 	            this.titulo = titulo;
 	        }
-
+	      
 	        // Puedes implementar equals y hashCode aquí si es necesario
 	    }
 	}

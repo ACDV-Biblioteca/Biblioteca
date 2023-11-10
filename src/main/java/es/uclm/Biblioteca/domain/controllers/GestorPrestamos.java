@@ -1,5 +1,7 @@
 package es.uclm.Biblioteca.domain.controllers;
 
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -7,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import es.uclm.Biblioteca.domain.entities.Ejemplar;
 import es.uclm.Biblioteca.domain.entities.Prestamo;
+import es.uclm.Biblioteca.domain.entities.Titulo;
 import es.uclm.Biblioteca.domain.entities.Usuario;
 import es.uclm.Biblioteca.persistencia.*;
 
@@ -23,7 +26,8 @@ public class GestorPrestamos {
 
 	@Autowired
 	private PrestamoDAO prestamoDAO;
-	
+	@Autowired
+	private TituloDAO tituloDAO;
 	ReservaDAO reservaDAO;
 	@Autowired
 	private EjemplarDAO ejemplarDAO;
@@ -36,40 +40,53 @@ public class GestorPrestamos {
 	 * @param idEjemplar
 	 * @param idUsuario
 	 */
-    @GetMapping("/PrestarEjemplar")
-    public String showPrestarEjemplarPage(Model model) {
-    	model.addAttribute("prestamo", new Prestamo());
-    	model.addAttribute("message", ""); 
-        return "PrestarEjemplar";
-    }
+	@GetMapping("/PrestarEjemplar")
+	public String showPrestarEjemplarPage(Model model) {
+		model.addAttribute("prestamo", new Prestamo());
+		model.addAttribute("message", "");
+		return "PrestarEjemplar";
+	}
 
-    // Método para procesar la solicitud de préstamo de ejemplar
-    @PostMapping("/PrestarEjemplar")
-    public String prestarEjemplar(@ModelAttribute Prestamo prestamo, Model model) {
+	// Método para procesar la solicitud de préstamo de ejemplar
+	@PostMapping("/PrestarEjemplar")
+	public String prestarEjemplar(@ModelAttribute Prestamo prestamo, Model model) {
 		model.addAttribute("prestamo", prestamo);
 		List<Ejemplar> ejemplarOpt2 = ejemplarDAO.findByIsbnNoPrestados(prestamo.getTitulo().getIsbn());
-		
-		Usuario usuario=usuarioDAO.getById(prestamo.getUsuario().getId());
-		
-		
-        // Aquí deberías implementar la lógica de comprobación de cupo y penalizaciones
-        // Puedes acceder a los datos del formulario a través del objeto 'prestamo'
 
-        // Ejemplo de lógica de comprobación (puedes adaptar según tus necesidades)
-        if (prestamoDAO.findCountPrestamosUsuario(prestamo.getUsuario().getId())>=10) {
-            model.addAttribute("message", "El usuario tiene el cupo de libros completo.");
-        } else if (prestamo.getUsuario().getFechaFinPenalizacion()==null) {
-            model.addAttribute("message", "El usuario tiene penalizaciones pendientes.");
-        } else {
-            // Aquí deberías realizar el proceso de préstamo
-            // Puedes agregar la lógica para actualizar la base de datos, etc.
-        	
-            model.addAttribute("message", "Préstamo realizado con éxito.");
-        }
+		Usuario usuario = usuarioDAO.getById(prestamo.getUsuario().getId());
+		LocalDate fechahoy = LocalDate.now();
 
-        // Retorna la vista correspondiente (puede ser la misma página de préstamo con el mensaje)
-        return "PrestarEjemplar";
-    }
+		Date fechaHoy = Date.valueOf(fechahoy);
+		
+		if (prestamoDAO.findCountPrestamosUsuario(prestamo.getUsuario().getId()) > 10) {
+			model.addAttribute("message", "El usuario tiene el cupo de libros completo.");
+		} else if ((usuario.getFechaFinPenalizacion() == null) || usuario.getFechaFinPenalizacion().after(fechaHoy)) {
+			model.addAttribute("message", "El usuario tiene penalizaciones pendientes.");
+		} else if(ejemplarOpt2.size()==0) {
+			model.addAttribute("message", "No se dispone de ejemplares de este titulo para hacer prestamos");
+
+		}else {
+			Ejemplar ej = ejemplarOpt2.get(ejemplarOpt2.size() - 1);
+			Titulo titulo = tituloDAO.getById(prestamo.getTitulo().getIsbn());
+			
+			LocalDate fechafutura = fechahoy.plusWeeks(2);
+
+			Date fechaFutura = Date.valueOf(fechafutura);
+			prestamo.setActivo(true);
+			prestamo.setFechaFin(fechaFutura);
+			prestamo.setFechaInicio(fechaHoy);
+			prestamo.setEjemplar(ej);
+			prestamo.setTitulo(titulo);
+			prestamo.setUsuario(usuario);
+
+			log.info("Saved " + prestamoDAO.save(prestamo));
+			
+			model.addAttribute("message", "Préstamo realizado con éxito.");
+		}
+
+	
+		return "PrestarEjemplar";
+	}
 
 	/**
 	 * 
