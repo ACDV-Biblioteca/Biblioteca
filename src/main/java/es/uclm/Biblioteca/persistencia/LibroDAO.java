@@ -1,4 +1,4 @@
 package es.uclm.Biblioteca.persistencia;
 
-public class LibroDAO extends TituloDAO {
+public interface LibroDAO extends TituloDAO {
 }
