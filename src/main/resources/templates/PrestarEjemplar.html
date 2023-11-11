@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Prestar Ejemplar</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+        .message {
+            color: black;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Prestar Ejemplar</h2>
+<div>
+    <form action="#" th:action="@{/PrestarEjemplar}" th:object="${prestamo}" method="post">
+        <label for="usuarioId">ID del Usuario:</label>
+        <input type="number" th:field="*{usuario.id}" placeholder="ID del Usuario" required />
+        <br/>
+        <label for="ejemplarIsbn">ISBN del Ejemplar:</label>
+        <input type="number" th:field="*{titulo.isbn}" placeholder="ISBN del Ejemplar" required />
+        <br/>
+        <input type="submit" value="Prestar" />
+        <p class="message" th:if="${message}" th:text="${message}" id="message"></p>
+    </form>
+</div>
+
+</body>
+</html>

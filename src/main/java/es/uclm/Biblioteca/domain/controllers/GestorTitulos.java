@@ -79,9 +79,8 @@ public class GestorTitulos {
 	@PostMapping("/BorrarEjemplar")
 	public String bajaEjemplar(@ModelAttribute Ejemplar ejemplar, Model model) {
 		model.addAttribute("ejemplar", ejemplar);
-
-		List<Ejemplar> ejemplarOpt2 = ejemplarDAO.findByIsbn(ejemplar.getEjemplar_isbn());
-
+		List<Ejemplar> ejemplarOpt2 = ejemplarDAO.findByIsbn(ejemplar.getTitulo().getIsbn());
+		
 		// Si el Ejemplar existe, eliminarlo
 		if (!ejemplarOpt2.isEmpty()) {
 			if (ejemplarOpt2.size() == 1) {
@@ -93,7 +92,7 @@ public class GestorTitulos {
 						"Se ha borrado el ejemplar " + ejemplarOpt2.get(ejemplarOpt2.size() - 1).getId()
 								+ " con titulo " + ejemplarOpt2.get(ejemplarOpt2.size() - 1).getTitulo().getTitulo());
 				Titulo titulo = new Titulo();
-				titulo.setIsbn(ejemplar.getEjemplar_isbn());
+				titulo.setIsbn(ejemplar.getTitulo().getIsbn());
 				borrarTitulo(titulo);
 
 			} else {

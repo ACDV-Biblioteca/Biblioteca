@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import es.uclm.Biblioteca.domain.entities.Titulo;
 
 @Repository
-public interface TituloDAO extends JpaRepository<Titulo, Integer>{
+public interface TituloDAO extends JpaRepository<Titulo, Long>{
 	
    
 

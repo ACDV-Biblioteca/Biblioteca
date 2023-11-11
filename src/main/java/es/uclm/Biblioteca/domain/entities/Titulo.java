@@ -6,7 +6,6 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 
-
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -14,25 +13,24 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "Titulo")
 public class Titulo {
-    @Id
-    private Long isbn;
-    
-    @Column
-    private String titulo;
+	@Id
+	private Long isbn;
 
-    @Column
-    private int numReserva;
+	@Column
+	private String titulo;
 
-    
-    @OneToMany(mappedBy = "titulo")
-    private Collection<TituloAutor> autores;
+	@Column
+	private int numReserva;
 
-    @OneToMany(mappedBy = "titulo")
-    private Collection<Prestamo> prestamos;
-    @OneToMany(mappedBy = "titulo")
-    private Collection<Reserva> reserva;  
-    @OneToMany(mappedBy = "titulo")
-    private Collection<Ejemplar> ejemplares;
+	@OneToMany(mappedBy = "titulo")
+	private Collection<TituloAutor> autores;
+	@OneToMany(mappedBy = "titulo")
+	private Collection<Prestamo> prestamos;
+
+	@OneToMany(mappedBy = "titulo")
+	private Collection<Reserva> reserva;
+	@OneToMany(mappedBy = "titulo")
+	private Collection<Ejemplar> ejemplares;
 	public Long getIsbn() {
 		return isbn;
 	}
@@ -66,7 +64,6 @@ public class Titulo {
 	public Collection<Reserva> getReserva() {
 		return reserva;
 	}
-	
 	public void setReserva(Collection<Reserva> reserva) {
 		this.reserva = reserva;
 	}
@@ -76,6 +73,20 @@ public class Titulo {
 	public void setEjemplares(Collection<Ejemplar> ejemplares) {
 		this.ejemplares = ejemplares;
 	}
-    
-    // Getters y setters
+	public Titulo() {
+		super();
+		
+	}
+	public Titulo(Long isbn, String titulo, int numReserva, Collection<TituloAutor> autores,
+			Collection<Prestamo> prestamos, Collection<Reserva> reserva, Collection<Ejemplar> ejemplares) {
+		super();
+		this.isbn = isbn;
+		this.titulo = titulo;
+		this.numReserva = numReserva;
+		this.autores = autores;
+		this.prestamos = prestamos;
+		this.reserva = reserva;
+		this.ejemplares = ejemplares;
+	}
+	
 }
