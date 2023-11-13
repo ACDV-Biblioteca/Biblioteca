@@ -5,13 +5,15 @@
 	
 	import jakarta.persistence.Column;
 	import jakarta.persistence.Entity;
-	import jakarta.persistence.Id;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Id;
 	import jakarta.persistence.IdClass;
 	import jakarta.persistence.JoinColumn;
 	import jakarta.persistence.JoinColumns;
 	
 	import jakarta.persistence.ManyToOne;
-	import jakarta.persistence.Table;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Table;
 	import jakarta.persistence.Temporal;
 	import jakarta.persistence.TemporalType;
 	import jakarta.persistence.Transient;
@@ -110,9 +112,11 @@
 	    public void setActivo(Boolean activo) {
 	        this.activo = activo;
 	    }
+	    
+	    
 	    @Override
 		public String toString() {
-			return "Prestamo [ejemplar=" + ejemplar + ", usuario=" + usuario + ", titulo=" + titulo + ", fechaInicio="
+			return "Prestamo [ejemplar=" + ejemplar + ", usuario=" + usuario.getId() + ", titulo=" + titulo.getIsbn()+ ", fechaInicio="
 					+ fechaInicio + ", fechaFin=" + fechaFin + ", activo=" + activo + "]";
 		}
 

@@ -1,7 +1,8 @@
 package es.uclm.Biblioteca.domain.controllers;
 
-import java.sql.Date;
+import java.util.Date;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.ui.Model;
 
 @Controller
@@ -56,22 +58,22 @@ public class GestorPrestamos {
 		Usuario usuario = usuarioDAO.getById(prestamo.getUsuario().getId());
 		LocalDate fechahoy = LocalDate.now();
 
-		Date fechaHoy = Date.valueOf(fechahoy);
-		
+		Date fechaHoy = Date.from(fechahoy.atStartOfDay(ZoneId.systemDefault()).toInstant());
+
 		if (prestamoDAO.findCountPrestamosUsuario(prestamo.getUsuario().getId()) > 10) {
 			model.addAttribute("message", "El usuario tiene el cupo de libros completo.");
 		} else if ((usuario.getFechaFinPenalizacion() == null) || usuario.getFechaFinPenalizacion().after(fechaHoy)) {
 			model.addAttribute("message", "El usuario tiene penalizaciones pendientes.");
-		} else if(ejemplarOpt2.size()==0) {
+		} else if (ejemplarOpt2.size() == 0) {
 			model.addAttribute("message", "No se dispone de ejemplares de este titulo para hacer prestamos");
 
-		}else {
+		} else {
 			Ejemplar ej = ejemplarOpt2.get(ejemplarOpt2.size() - 1);
 			Titulo titulo = tituloDAO.getById(prestamo.getTitulo().getIsbn());
-			
+
 			LocalDate fechafutura = fechahoy.plusWeeks(2);
 
-			Date fechaFutura = Date.valueOf(fechafutura);
+			Date fechaFutura = Date.from(fechafutura.atStartOfDay(ZoneId.systemDefault()).toInstant());
 			prestamo.setActivo(true);
 			prestamo.setFechaFin(fechaFutura);
 			prestamo.setFechaInicio(fechaHoy);
@@ -80,11 +82,10 @@ public class GestorPrestamos {
 			prestamo.setUsuario(usuario);
 
 			log.info("Saved " + prestamoDAO.save(prestamo));
-			
+
 			model.addAttribute("message", "Préstamo realizado con éxito.");
 		}
 
-	
 		return "PrestarEjemplar";
 	}
 
@@ -94,9 +95,57 @@ public class GestorPrestamos {
 	 * @param idEjemplar
 	 * @param idUsuario
 	 */
-	public void realizarDevolucion(String isbn, String idEjemplar, String idUsuario) {
-		// TODO - implement GestorPrestamos.realizarDevolucion
-		throw new UnsupportedOperationException();
+	@GetMapping("/DevolucionEjemplar")
+	public String mostrarFormularioDevolucion() {
+		return "DevolucionEjemplar";
+	}
+
+	@PostMapping("/DevolucionEjemplar")
+	public String realizarDevolucion(@RequestParam("userId") int userId, @RequestParam("isbn") Long isbn,
+			@RequestParam("ejemplarId") int ejemplarId, Model model) {
+
+		Usuario usuario = usuarioDAO.getById(userId);
+		Titulo titulo = tituloDAO.getById(isbn);
+		Ejemplar ejemplar = ejemplarDAO.getById(ejemplarId);
+		if (!ejemplar.getTitulo().getIsbn().equals(titulo.getIsbn())) {
+			model.addAttribute("message", "El Isbn no concuerda con el id del ejemplar dado");
+		} else {
+
+			Prestamo prestamo = prestamoDAO.findByPrestamoId(ejemplar.getId(), usuario.getId(), titulo.getIsbn());
+			if (prestamo!=null) {
+				LocalDate fechahoy = LocalDate.now();
+
+				Date fechaHoy = Date.from(fechahoy.atStartOfDay(ZoneId.systemDefault()).toInstant());
+				if (prestamo.getFechaFin().before(fechaHoy)) {
+					LocalDate fechafutura = fechahoy.plusWeeks(2);
+
+					Date fechaFutura = Date.from(fechafutura.atStartOfDay(ZoneId.systemDefault()).toInstant());
+					usuario.setFechaFinPenalizacion(fechaFutura);
+					GestorPenalizaciones gestor = new GestorPenalizaciones();
+					if (gestor.aplicarPenalizacion(usuario, usuarioDAO) == 1) {
+						prestamoDAO.delete(prestamo);
+						log.info("Delete: " + prestamo);
+
+						model.addAttribute("message",
+								"Devolución realizada con éxito con Penalizacion hasta " + fechaFutura.toString());
+
+					} else {
+						model.addAttribute("message", "Ha ocurrido un problema al aplicar la penalizacion");
+
+					}
+
+				} else {
+					prestamoDAO.delete(prestamo);
+					log.info("Delete: " + prestamo);
+					model.addAttribute("message", "Devolución realizada con éxito");
+
+				}
+			}else {
+				model.addAttribute("message", "No hay ningun prestamo con los datos obtenidos");
+
+			}
+		}
+		return "DevolucionEjemplar";
 	}
 
 	/**

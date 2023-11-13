@@ -22,10 +22,10 @@ public class Usuario {
 	@Column
 
 	private String apellidos;
-	@Column
+	@Column(name = "FECHA_FIN_PENALIZACION")
     @Temporal(TemporalType.DATE)
 
-	private Date fechaFinPenalizacion;
+	private Date fecha_Fin_Penalizacion;
 	
 	@Column 
 	private String contraseña;
@@ -54,10 +54,10 @@ public class Usuario {
 		this.apellidos = apellidos;
 	}
 	public Date getFechaFinPenalizacion() {
-		return fechaFinPenalizacion;
+		return fecha_Fin_Penalizacion;
 	}
-	public void setFechaFinPenalizacion(Date fechaFinPenalizacion) {
-		this.fechaFinPenalizacion = fechaFinPenalizacion;
+	public void setFechaFinPenalizacion(Date fecha_Fin_Penalizacion) {
+		this.fecha_Fin_Penalizacion = fecha_Fin_Penalizacion;
 	}
 	public String getContraseña() {
 		return contraseña;
@@ -74,13 +74,13 @@ public class Usuario {
 	public Usuario() {
 		super();
 	}
-	public Usuario(int id, String nombre, String apellidos, Date fechaFinPenalizacion, String contraseña,
+	public Usuario(int id, String nombre, String apellidos, Date fecha_Fin_Penalizacion, String contraseña,
 			Collection<Prestamo> prestamos, Collection<Reserva> reservas) {
 		super();
 		this.id = id;
 		this.nombre = nombre;
 		this.apellidos = apellidos;
-		this.fechaFinPenalizacion = fechaFinPenalizacion;
+		this.fecha_Fin_Penalizacion = fecha_Fin_Penalizacion;
 		this.contraseña = contraseña;
 		this.prestamos = prestamos;
 		this.reservas = reservas;

@@ -1,19 +1,28 @@
 package es.uclm.Biblioteca.domain.controllers;
 
 import es.uclm.Biblioteca.persistencia.*;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+
 import es.uclm.Biblioteca.domain.entities.*;
 
+@Controller
 public class GestorPenalizaciones {
-
-	UsuarioDAO usuarioDAO;
+	private static final Logger log = LoggerFactory.getLogger(GestorTitulos.class);
 
 	/**
 	 * 
 	 * @param u
 	 */
-	public void aplicarPenalizacion(Usuario u) {
-		// TODO - implement GestorPenalizaciones.aplicarPenalizacion
-		throw new UnsupportedOperationException();
+	public int aplicarPenalizacion(Usuario u, UsuarioDAO usuarioDAO) {
+
+		int resultado = 0;
+		resultado = usuarioDAO.aplicarPenalizacion(u.getId(), u.getFechaFinPenalizacion());
+
+		return resultado;
 	}
 
 	/**
