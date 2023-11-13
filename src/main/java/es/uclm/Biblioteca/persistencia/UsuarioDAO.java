@@ -17,4 +17,5 @@ public interface UsuarioDAO extends JpaRepository<Usuario, Integer> {
 	@Transactional
 	public int aplicarPenalizacion(@Param("id_usuario") int id_usuario, @Param("fecha") java.util.Date fecha);
 
+	
 }

@@ -4,6 +4,7 @@ import java.util.*;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
@@ -30,9 +31,9 @@ public class Usuario {
 	@Column 
 	private String contraseña;
 	
-	@OneToMany(mappedBy = "usuario")
+	@OneToMany(mappedBy = "usuario", fetch = FetchType.EAGER)
 	private Collection<Prestamo> prestamos;
-	@OneToMany(mappedBy = "usuario")
+	@OneToMany(mappedBy = "usuario", fetch = FetchType.EAGER)
 	private Collection<Reserva> reservas;
 	
 	public int getId() {
@@ -84,6 +85,12 @@ public class Usuario {
 		this.contraseña = contraseña;
 		this.prestamos = prestamos;
 		this.reservas = reservas;
+	}
+	@Override
+	public String toString() {
+		return "Usuario [id=" + id + ", nombre=" + nombre + ", apellidos=" + apellidos + ", fecha_Fin_Penalizacion="
+				+ fecha_Fin_Penalizacion + ", contraseña=" + contraseña + ", prestamos=" + prestamos + ", reservas="
+				+ reservas + "]";
 	}
 	public Collection<Reserva> getReservas() {
 		return reservas;

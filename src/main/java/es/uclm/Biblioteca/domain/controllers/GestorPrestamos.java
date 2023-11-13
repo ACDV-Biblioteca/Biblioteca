@@ -13,6 +13,7 @@ import es.uclm.Biblioteca.domain.entities.Prestamo;
 import es.uclm.Biblioteca.domain.entities.Titulo;
 import es.uclm.Biblioteca.domain.entities.Usuario;
 import es.uclm.Biblioteca.persistencia.*;
+import jakarta.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -96,14 +97,22 @@ public class GestorPrestamos {
 	 * @param idUsuario
 	 */
 	@GetMapping("/DevolucionEjemplar")
-	public String mostrarFormularioDevolucion() {
+	public String mostrarFormularioDevolucion(HttpSession session,Model model) {
+		Usuario u=(Usuario) session.getAttribute("usuario");
+		 if (u != null) {
+	            model.addAttribute("usuario", u);
+
+		 }
 		return "DevolucionEjemplar";
 	}
 
 	@PostMapping("/DevolucionEjemplar")
 	public String realizarDevolucion(@RequestParam("userId") int userId, @RequestParam("isbn") Long isbn,
-			@RequestParam("ejemplarId") int ejemplarId, Model model) {
+			@RequestParam("ejemplarId") int ejemplarId, Model model,HttpSession session) {
+		 	//log.info(((Usuario) session.getAttribute("usuario")).toString());
 
+		
+		@SuppressWarnings("deprecation")
 		Usuario usuario = usuarioDAO.getById(userId);
 		Titulo titulo = tituloDAO.getById(isbn);
 		Ejemplar ejemplar = ejemplarDAO.getById(ejemplarId);
