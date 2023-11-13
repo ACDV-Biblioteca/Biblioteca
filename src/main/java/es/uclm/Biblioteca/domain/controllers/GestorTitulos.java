@@ -32,9 +32,63 @@ public class GestorTitulos {
 	 * @param isbn
 	 * @param autores
 	 */
-	public Titulo altaTitulo(String titulo, String isbn, String[] autores) {
-		// TODO - implement GestorTitulos.altaT�tulo
-		throw new UnsupportedOperationException();
+	@GetMapping("/DarAltaTitulo")
+	public String altaTitulo(Model model) {
+		model.addAttribute("Titulo", new Titulo());
+		model.addAttribute("Autor", new Autor());
+		model.addAttribute("message", ""); // Inicializa el mensaje como vacío
+		return "DarAltaTitulo";
+	}
+
+	@PostMapping("/DarAltaTitulo")
+	public String altaTitulo(@ModelAttribute Titulo titulo, @ModelAttribute Autor autor, @ModelAttribute TituloAutor tituloautor, Model model) {
+
+		Optional<Titulo> tituloOpt = tituloDAO.findById(titulo.getIsbn());
+		Optional<Autor> autorOpt = autorDAO.findById(autor.getId());
+	// Comprobar si el titulo existe
+		
+		// Existe con ese titulo y con ese autor
+		if (tituloOpt.isPresent()) {
+			if(autorOpt.isPresent()){
+				model.addAttribute("message", "Este titulo con este autor ya existe");
+				log.info("Este titulo con este autor ya existe");
+			}
+			//Existe el titulo con otro autor
+			else {
+				model.addAttribute("message", "Se ha añadido el titulo "+titulo.getIsbn()+"con titulo "+titulo.getTitulo()+"y autor "+titulo.getAutores());
+				log.info("Se ha añadido el titulo "+titulo.getIsbn()+"con titulo "+titulo.getTitulo()+"y autor "+titulo.getAutores());
+				
+				model.addAttribute("autor", autor);
+				autorDAO.save(autor);
+			}
+		}
+
+		// No existe ese titulo
+		else {
+			//Comprobar si existe ese autor
+			if(autorOpt.isPresent()){
+				model.addAttribute("message", "Se ha añadido el titulo "+titulo.getIsbn()+"con titulo "+titulo.getTitulo()+"y autor "+titulo.getAutores());
+				log.info("Se ha añadido el titulo "+titulo.getIsbn()+"con titulo "+titulo.getTitulo()+"y autor "+titulo.getAutores());
+				
+				model.addAttribute("titulo", titulo);
+				tituloDAO.save(titulo);
+			}
+			//No existe el titulo ni el autor
+			else {
+				model.addAttribute("message", "Se ha añadido el titulo "+titulo.getIsbn()+"con titulo "+titulo.getTitulo()+"y autor "+titulo.getAutores());
+				log.info("Se ha añadido el titulo "+titulo.getIsbn()+"con titulo "+titulo.getTitulo()+"y autor "+titulo.getAutores());
+				
+				model.addAttribute("titulo", titulo);
+				model.addAttribute("autor", autor);
+				tituloDAO.save(titulo);
+				autorDAO.save(autor);				
+			}
+			
+			//model.addAttribute("Isbn", isbn);
+			//tituloautor
+			//TituloAutor savedTituloAutor = tituloAutorDAO.saveAll(tituloautor);
+		}
+		return "DarAltaTitulo";
 	}
 
 	/**

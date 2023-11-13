@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org">
+<head>
+   	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Dar de alta nuevos titulos</title>
+	<style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+        .message {
+            color: black;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Ingresar nuevo titulo</h2>
+<div>
+	<form action="#" th:action="@{/DarAltaTitulo}" th:object="${titulo}" method="post">
+     
+    <p>Titulo: <input type="text" th:field="*{titulo.titulo}" placeholder="Nombre del nuevo titulo"/>
+    <p>Autor: <input type="text" th:field="*{autor.nombre}" placeholder="Nombre del autor"/>
+    
+    <input type="submit" value="Agregar"/>
+    <input type="reset" value="Resetear"/>
+	
+	</form>
+	
+</div>

@@ -7,8 +7,8 @@
 			"name": "database",
 			"save-password": true,
 			"configuration": {
-				"database": "D:\\Eclipse\\Repositorios\\Biblioteca\\database",
-				"url": "jdbc:derby:D:\\Eclipse\\Repositorios\\Biblioteca\\database",
+				"database": "C:\\Users\\Victo\\git\\Biblioteca\\database",
+				"url": "jdbc:derby:C:\\Users\\Victo\\git\\Biblioteca\\database",
 				"configurationType": "MANUAL",
 				"type": "dev",
 				"auth-model": "native"

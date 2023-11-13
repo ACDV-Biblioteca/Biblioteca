@@ -1,28 +1,14 @@
 package es.uclm.Biblioteca.persistencia;
 
-public class AutorDAO extends EntityDAO {
+import java.util.List;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import es.uclm.Biblioteca.domain.entities.Autor;
+import es.uclm.Biblioteca.domain.entities.Ejemplar;
 
+public interface AutorDAO extends JpaRepository<Autor, Integer>{
 	
-	public Object select(String id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	@Query(value = "SELECT * FROM DERBYUSER.autor WHERE NOMBRE =?", nativeQuery = true)
+	public List<Autor> findById(String nombre);
 
-	@Override
-	public int insert(Object entity) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public int update(Object entity) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public int delete(Object entity) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
 }
