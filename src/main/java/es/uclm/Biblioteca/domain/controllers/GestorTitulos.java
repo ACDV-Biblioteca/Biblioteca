@@ -71,11 +71,30 @@ public class GestorTitulos {
     /**
      * @param t
      */
-    public void altaEjemplar(Titulo t) {
-        // TODO - implement GestorTitulos.altaEjemplar
-        throw new UnsupportedOperationException();
+    @GetMapping("/AñadirEjemplar")
+    public String showAñadirEjemplarPage(Model model) {
+        model.addAttribute("titulo", new Titulo());
+        model.addAttribute("message", ""); // Inicializa el mensaje como vacío
+
+        return "AñadirEjemplar";
     }
 
+    @PostMapping("/AñadirEjemplar")
+    public String altaEjemplar(@ModelAttribute Titulo titulo, Model model) {
+        model.addAttribute("titulo", titulo);
+        Titulo t = tituloDAO.getById(titulo.getIsbn());
+        if(t!=null) {
+        	Ejemplar ejemplar = new Ejemplar();
+        	ejemplar.setTitulo(t);
+        	ejemplar.setId((int)ejemplarDAO.count()+1);
+        	ejemplarDAO.save(ejemplar);
+        	log.info("Saved: " + ejemplar);
+        }else {
+        	
+              model.addAttribute("message", "No existe ese Titulo para añadir el ejemplar"); // Inicializa el mensaje como vací
+        }
+        return "AñadirEjemplar";
+    }
     /**
      * @param t
      */

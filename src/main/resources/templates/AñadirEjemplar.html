@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org">
+<head>
+   	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Borrar Ejemplar</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+        .message {
+            color: black;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Añadir Ejemplar</h2>
+<div>
+	<form action="#" th:action="@{/AñadirEjemplar}" th:object="${titulo}" method="post">
+	<label for="ejemplarId">Introduce el Isbn del titulo para añadir el Ejemplar: </label>
+    <p>ISBN: <input type="number" th:field="*{isbn}" placeholder="Isbn del titulo" /></p>
+    <input type="submit" value="Añadir" />
+    <p class="message" th:if="${message}" th:text="${message}" id="message"></p>
+    
+     </form>
+    
+
+    
+</div>
+
+
+
+</body>
+</html>
