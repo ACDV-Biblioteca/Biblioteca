@@ -58,5 +58,10 @@ public class GestorLogin {
 
 		return "procesarInicioSesion"; // Nombre del archivo HTML
 	}
+	
+	@GetMapping("/PanelAdministrador")
+	public String mostrarFormularioAdministrador() {
+		return "PanelAdministrador"; // Nombre del archivo HTML
+	}
 
 }

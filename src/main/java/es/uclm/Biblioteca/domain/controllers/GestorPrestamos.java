@@ -36,6 +36,9 @@ public class GestorPrestamos {
 	private EjemplarDAO ejemplarDAO;
 	@Autowired
 	private UsuarioDAO usuarioDAO;
+	
+	GestorPenalizaciones gestor = new GestorPenalizaciones();
+
 
 	/**
 	 * 
@@ -63,12 +66,14 @@ public class GestorPrestamos {
 
 		if (prestamoDAO.findCountPrestamosUsuario(prestamo.getUsuario().getId()) > 10) {
 			model.addAttribute("message", "El usuario tiene el cupo de libros completo.");
-		} else if ((usuario.getFechaFinPenalizacion() == null) || usuario.getFechaFinPenalizacion().after(fechaHoy)) {
+			
+		} else if (gestor.comprobarPenalizacion(usuario, usuarioDAO,fechaHoy)) {
 			model.addAttribute("message", "El usuario tiene penalizaciones pendientes.");
 		} else if (ejemplarOpt2.size() == 0) {
 			model.addAttribute("message", "No se dispone de ejemplares de este titulo para hacer prestamos");
 
 		} else {
+			
 			Ejemplar ej = ejemplarOpt2.get(ejemplarOpt2.size() - 1);
 			Titulo titulo = tituloDAO.getById(prestamo.getTitulo().getIsbn());
 
@@ -130,7 +135,6 @@ public class GestorPrestamos {
 
 					Date fechaFutura = Date.from(fechafutura.atStartOfDay(ZoneId.systemDefault()).toInstant());
 					usuario.setFechaFinPenalizacion(fechaFutura);
-					GestorPenalizaciones gestor = new GestorPenalizaciones();
 					if (gestor.aplicarPenalizacion(usuario, usuarioDAO) == 1) {
 						prestamoDAO.delete(prestamo);
 						log.info("Delete: " + prestamo);

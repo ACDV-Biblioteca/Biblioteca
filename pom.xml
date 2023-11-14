@@ -11,7 +11,7 @@
 	<artifactId>Biblioteca</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>Biblioteca</name>
-	<description>Demo project for Spring Boot</description>
+	<description>Proyecto Biblioteca</description>
 	<properties>
 		<java.version>17</java.version>
 	</properties>
