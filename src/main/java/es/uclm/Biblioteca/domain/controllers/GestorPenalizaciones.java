@@ -2,6 +2,8 @@ package es.uclm.Biblioteca.domain.controllers;
 
 import es.uclm.Biblioteca.persistencia.*;
 
+import java.util.Date;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,9 +31,17 @@ public class GestorPenalizaciones {
 	 * 
 	 * @param u
 	 */
-	public void comprobarPenalizacion(Usuario u) {
-		// TODO - implement GestorPenalizaciones.comprobarPenalizaci�n
-		throw new UnsupportedOperationException();
+	public boolean comprobarPenalizacion(Usuario u, UsuarioDAO usuarioDAO,Date fechaHoy) {
+		boolean resultado=true;
+		Date fecha_penalizacion= null;
+		
+		fecha_penalizacion=usuarioDAO.comprobarPenalizacion(u.getId());
+		//(usuario.getFechaFinPenalizacion() == null) || usuario.getFechaFinPenalizacion().after(fechaHoy)
+		if(fecha_penalizacion == null || fecha_penalizacion.after(fechaHoy)) {
+			resultado=false;
+		}
+		
+		return resultado;
 	}
 
 }

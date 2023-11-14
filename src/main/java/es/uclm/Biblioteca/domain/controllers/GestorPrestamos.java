@@ -13,6 +13,7 @@ import es.uclm.Biblioteca.domain.entities.Prestamo;
 import es.uclm.Biblioteca.domain.entities.Titulo;
 import es.uclm.Biblioteca.domain.entities.Usuario;
 import es.uclm.Biblioteca.persistencia.*;
+import jakarta.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -35,6 +36,9 @@ public class GestorPrestamos {
 	private EjemplarDAO ejemplarDAO;
 	@Autowired
 	private UsuarioDAO usuarioDAO;
+	
+	GestorPenalizaciones gestor = new GestorPenalizaciones();
+
 
 	/**
 	 * 
@@ -62,12 +66,14 @@ public class GestorPrestamos {
 
 		if (prestamoDAO.findCountPrestamosUsuario(prestamo.getUsuario().getId()) > 10) {
 			model.addAttribute("message", "El usuario tiene el cupo de libros completo.");
-		} else if ((usuario.getFechaFinPenalizacion() == null) || usuario.getFechaFinPenalizacion().after(fechaHoy)) {
+			
+		} else if (gestor.comprobarPenalizacion(usuario, usuarioDAO,fechaHoy)) {
 			model.addAttribute("message", "El usuario tiene penalizaciones pendientes.");
 		} else if (ejemplarOpt2.size() == 0) {
 			model.addAttribute("message", "No se dispone de ejemplares de este titulo para hacer prestamos");
 
 		} else {
+			
 			Ejemplar ej = ejemplarOpt2.get(ejemplarOpt2.size() - 1);
 			Titulo titulo = tituloDAO.getById(prestamo.getTitulo().getIsbn());
 
@@ -96,14 +102,22 @@ public class GestorPrestamos {
 	 * @param idUsuario
 	 */
 	@GetMapping("/DevolucionEjemplar")
-	public String mostrarFormularioDevolucion() {
+	public String mostrarFormularioDevolucion(HttpSession session,Model model) {
+		Usuario u=(Usuario) session.getAttribute("usuario");
+		 if (u != null) {
+	            model.addAttribute("usuario", u);
+
+		 }
 		return "DevolucionEjemplar";
 	}
 
 	@PostMapping("/DevolucionEjemplar")
 	public String realizarDevolucion(@RequestParam("userId") int userId, @RequestParam("isbn") Long isbn,
-			@RequestParam("ejemplarId") int ejemplarId, Model model) {
+			@RequestParam("ejemplarId") int ejemplarId, Model model,HttpSession session) {
+		 	//log.info(((Usuario) session.getAttribute("usuario")).toString());
 
+		
+		@SuppressWarnings("deprecation")
 		Usuario usuario = usuarioDAO.getById(userId);
 		Titulo titulo = tituloDAO.getById(isbn);
 		Ejemplar ejemplar = ejemplarDAO.getById(ejemplarId);
@@ -121,7 +135,6 @@ public class GestorPrestamos {
 
 					Date fechaFutura = Date.from(fechafutura.atStartOfDay(ZoneId.systemDefault()).toInstant());
 					usuario.setFechaFinPenalizacion(fechaFutura);
-					GestorPenalizaciones gestor = new GestorPenalizaciones();
 					if (gestor.aplicarPenalizacion(usuario, usuarioDAO) == 1) {
 						prestamoDAO.delete(prestamo);
 						log.info("Delete: " + prestamo);
