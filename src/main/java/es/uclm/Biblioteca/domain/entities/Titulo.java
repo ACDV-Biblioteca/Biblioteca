@@ -88,5 +88,17 @@ public class Titulo {
 		this.reserva = reserva;
 		this.ejemplares = ejemplares;
 	}
-	
+
+	@Override
+	public String toString() {
+		return "Titulo{" +
+				"isbn=" + isbn +
+				", titulo='" + titulo + '\'' +
+				", numReserva=" + numReserva +
+				", autores=" + autores +
+				", prestamos=" + prestamos +
+				", reserva=" + reserva +
+				", ejemplares=" + ejemplares +
+				'}';
+	}
 }
