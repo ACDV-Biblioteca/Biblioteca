@@ -2,10 +2,30 @@ package es.uclm.Biblioteca.domain.entities;
 
 import java.util.Date;
 
-public class Reserva {
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 
-	Usuario usuario;
-	Titulo titulo;
+@Entity
+@Table(name="Reserva")
+
+public class Reserva {
+	@Id
+	@ManyToOne
+	@JoinColumn(name = "titulo_isbn", referencedColumnName = "isbn")
+	private Titulo titulo;
+
+	@Id
+	@ManyToOne
+	@JoinColumn(name = "usuario_id", referencedColumnName = "id")
+	private Usuario usuario;
+	@Column
+    @Temporal(TemporalType.DATE)
 	private Date fecha;
 
 }

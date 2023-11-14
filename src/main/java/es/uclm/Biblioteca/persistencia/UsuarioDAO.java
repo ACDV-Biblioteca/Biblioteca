@@ -1,28 +1,24 @@
 package es.uclm.Biblioteca.persistencia;
 
-public class UsuarioDAO extends EntityDAO {
 
-	@Override
-	public Object select(String id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+import java.util.Date;
 
-	@Override
-	public int insert(Object entity) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
-	@Override
-	public int update(Object entity) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+import es.uclm.Biblioteca.domain.entities.Usuario;
+import jakarta.transaction.Transactional;
 
-	@Override
-	public int delete(Object entity) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+@Repository
+public interface UsuarioDAO extends JpaRepository<Usuario, Integer> {
+	@Modifying
+	@Query("UPDATE Usuario  SET fecha_Fin_Penalizacion = :fecha WHERE id = :id_usuario")
+	@Transactional
+	public int aplicarPenalizacion(@Param("id_usuario") int id_usuario, @Param("fecha") java.util.Date fecha);
+
+	@Query(value="Select Fecha_fin_penalizacion from usuario where id = :id_usuario",nativeQuery=true)
+	public java.util.Date comprobarPenalizacion(@Param("id_usuario") int id_usuario);
 }
