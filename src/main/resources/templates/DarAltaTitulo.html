@@ -1,0 +1,42 @@
+<!-- ... (parte del código anterior) ... -->
+<body>
+
+<h2>Ingresar nuevo titulo</h2>
+<div>
+    <form action="#" th:action="@{/DarAltaTitulo}" th:object="${titulo}" method="post">
+     
+        <p>Título: <input type="number" th:field="*{isbn}" placeholder="ISBN del nuevo titulo"/>
+        
+        <!-- Contenedor para los campos de autor -->
+        <div id="autores-container"></div>
+        
+        <!-- Botón para agregar más autores -->
+        <button type="button" onclick="agregarAutor()">Agregar Autor</button>
+        
+        <input type="submit" value="Agregar"/>
+        <input type="reset" value="Resetear"/>
+    
+    </form>
+    
+    <!-- Script para gestionar la adición dinámica de autores -->
+    <script th:inline="javascript">
+        var indiceAutor = 0;
+
+        function agregarAutor() {
+            var container = document.getElementById('autores-container');
+            var nuevoAutorHtml = `
+                <div>
+                    <p>Autor <span th:text="${indiceAutor + 1}">1</span>: 
+                        <input type="text" th:field="*{autores[__${indiceAutor}__].nombre}" placeholder="Nombre del autor"/>
+                        <input type="text" th:field="*{autores[__${indiceAutor}__].apellido}" placeholder="Apellido del autor"/>
+                    </p>
+                </div>
+            `;
+            container.insertAdjacentHTML('beforeend', nuevoAutorHtml);
+            indiceAutor++;
+        }
+    </script>
+</div>
+
+</body>
+</html>

@@ -33,6 +33,11 @@ public class Autor {
 			return id;
 		}
 
+		@Override
+		public String toString() {
+			return "Autor [id=" + id + ", nombre=" + nombre + ", apellidos=" + apellidos + ", titulos=" + titulos + "]";
+		}
+
 		public void setId(int id) {
 			this.id = id;
 		}

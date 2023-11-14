@@ -8,12 +8,16 @@ import es.uclm.Biblioteca.domain.entities.Autor;
 import es.uclm.Biblioteca.domain.entities.Ejemplar;
 import es.uclm.Biblioteca.domain.entities.Titulo;
 import es.uclm.Biblioteca.domain.entities.TituloAutor;
+import es.uclm.Biblioteca.domain.entities.TituloAutor.TituloAutorId;
 
-public interface TituloAutorDAO extends JpaRepository<Titulo, Long>{
+public interface TituloAutorDAO extends JpaRepository<TituloAutor, TituloAutorId>{
 	
-	@Query(value = "SELECT * FROM DERBYUSER.tituloAutor WHERE TITULOAUTOR =?", nativeQuery = true)
-	public List<TituloAutor> findById(Titulo titulo);
+	@Query(value = "SELECT Autor_ID FROM DERBYUSER.titulo_Autor WHERE TITULO_ISBN =?", nativeQuery = true)
+	public List<Autor> findByTitulo(Long titulo);
 	
-	@Query(value = "SELECT * FROM DERBYUSER.tituloAutor WHERE TITULOAUTOR =?", nativeQuery = true)
-	public List<TituloAutor> findById(Autor autor);
+	@Query(value = "SELECT * FROM DERBYUSER.titulo_Autor WHERE AUTOR_ID =?", nativeQuery = true)
+	public List<TituloAutor> findByAutor(int autor);
+
+	@Query(value = "SELECT * FROM TituloAutor WHERE isbn_titulo =:isbn AND autor_id =:autor", nativeQuery = true)
+	public TituloAutor findByTituloAutorId(long isbn, int autor);
 }

@@ -13,81 +13,65 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.ui.Model;
 import es.uclm.Biblioteca.domain.entities.*;
+import java.lang.*;
+import java.sql.*;
 
 @Controller
 public class GestorTitulos {
 	private static final Logger log = LoggerFactory.getLogger(GestorTitulos.class);
-	TituloDAO tituloDAO;
+	
 
 	@Autowired
 	private EjemplarDAO ejemplarDAO;
-
-	AutorDAO autorDAO;
+	@Autowired
+	private TituloDAO tituloDAO;
+	@Autowired
+	private AutorDAO autorDAO;
+	@Autowired
+	private TituloAutorDAO tituloAutorDAO;
 
 	/**
 	 * 
-	 * @param titulo
-	 * @param isbn
-	 * @param autores
+	 * @param t
 	 */
 	@GetMapping("/DarAltaTitulo")
-	public String altaTitulo(Model model) {
-		model.addAttribute("Titulo", new Titulo());
-		model.addAttribute("Autor", new Autor());
+	public String showAltaTitulo(Model model) {
+		model.addAttribute("titulo", new Titulo());
 		model.addAttribute("message", ""); // Inicializa el mensaje como vacío
 		return "DarAltaTitulo";
 	}
 
 	@PostMapping("/DarAltaTitulo")
-	public String altaTitulo(@ModelAttribute Titulo titulo, @ModelAttribute Autor autor, @ModelAttribute TituloAutor tituloautor, Model model) {
+	public String altaTitulo(@ModelAttribute Titulo titulo, Model model) {
+		model.addAttribute("titulo", titulo);
 
 		Optional<Titulo> tituloOpt = tituloDAO.findById(titulo.getIsbn());
-		Optional<Autor> autorOpt = autorDAO.findById(autor.getId());
+		
 	// Comprobar si el titulo existe
 		
 		// Existe con ese titulo y con ese autor
 		if (tituloOpt.isPresent()) {
-			if(autorOpt.isPresent()){
+
+			log.info(tituloOpt.get().toString());
+			
+		
 				model.addAttribute("message", "Este titulo con este autor ya existe");
 				log.info("Este titulo con este autor ya existe");
-			}
-			//Existe el titulo con otro autor
-			else {
-				model.addAttribute("message", "Se ha añadido el titulo "+titulo.getIsbn()+"con titulo "+titulo.getTitulo()+"y autor "+titulo.getAutores());
-				log.info("Se ha añadido el titulo "+titulo.getIsbn()+"con titulo "+titulo.getTitulo()+"y autor "+titulo.getAutores());
-				
-				model.addAttribute("autor", autor);
-				autorDAO.save(autor);
-			}
 		}
 
 		// No existe ese titulo
 		else {
-			//Comprobar si existe ese autor
-			if(autorOpt.isPresent()){
-				model.addAttribute("message", "Se ha añadido el titulo "+titulo.getIsbn()+"con titulo "+titulo.getTitulo()+"y autor "+titulo.getAutores());
-				log.info("Se ha añadido el titulo "+titulo.getIsbn()+"con titulo "+titulo.getTitulo()+"y autor "+titulo.getAutores());
-				
-				model.addAttribute("titulo", titulo);
-				tituloDAO.save(titulo);
-			}
 			//No existe el titulo ni el autor
-			else {
 				model.addAttribute("message", "Se ha añadido el titulo "+titulo.getIsbn()+"con titulo "+titulo.getTitulo()+"y autor "+titulo.getAutores());
 				log.info("Se ha añadido el titulo "+titulo.getIsbn()+"con titulo "+titulo.getTitulo()+"y autor "+titulo.getAutores());
 				
 				model.addAttribute("titulo", titulo);
-				model.addAttribute("autor", autor);
-				tituloDAO.save(titulo);
-				autorDAO.save(autor);				
-			}
-			
-			//model.addAttribute("Isbn", isbn);
-			//tituloautor
-			//TituloAutor savedTituloAutor = tituloAutorDAO.saveAll(tituloautor);
+				//tituloDAO.save(titulo);
 		}
+			
 		return "DarAltaTitulo";
 	}
 
