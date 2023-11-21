@@ -32,7 +32,8 @@ public class GestorPrestamos {
 	private PrestamoDAO prestamoDAO;
 	@Autowired
 	private TituloDAO tituloDAO;
-	ReservaDAO reservaDAO;
+	@Autowired
+	private ReservaDAO reservaDAO;
 	@Autowired
 	private EjemplarDAO ejemplarDAO;
 	@Autowired
@@ -122,9 +123,8 @@ public class GestorPrestamos {
 				prestamo.setEjemplar(ejemplar);
 				prestamo.setTitulo(ejemplar.getTitulo());
 				prestamo.setUsuario(usuario);
-
+				log.info("Se han eliminado  "+ reservaDAO.deleteByEjemplar(ejemplar.getId())+" reservas con el ejemplar :"+ ejemplar.getId());
 				log.info("Saved " + prestamoDAO.save(prestamo));
-				log.info("Delete: "+ reservaDAO.deleteByEjemplar(ejemplar.getId()));
 
 				model.addAttribute("message", "Préstamo realizado con éxito.");
 
