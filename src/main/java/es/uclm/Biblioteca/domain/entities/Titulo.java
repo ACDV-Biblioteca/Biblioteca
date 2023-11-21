@@ -27,8 +27,7 @@ public class Titulo {
 	@OneToMany(mappedBy = "titulo")
 	private Collection<Prestamo> prestamos;
 
-	@OneToMany(mappedBy = "titulo")
-	private Collection<Reserva> reserva;
+	
 	@OneToMany(mappedBy = "titulo")
 	private Collection<Ejemplar> ejemplares;
 	public Long getIsbn() {
@@ -61,12 +60,7 @@ public class Titulo {
 	public void setPrestamos(Collection<Prestamo> prestamos) {
 		this.prestamos = prestamos;
 	}
-	public Collection<Reserva> getReserva() {
-		return reserva;
-	}
-	public void setReserva(Collection<Reserva> reserva) {
-		this.reserva = reserva;
-	}
+	
 	public Collection<Ejemplar> getEjemplares() {
 		return ejemplares;
 	}
@@ -78,14 +72,13 @@ public class Titulo {
 		
 	}
 	public Titulo(Long isbn, String titulo, int numReserva, Collection<TituloAutor> autores,
-			Collection<Prestamo> prestamos, Collection<Reserva> reserva, Collection<Ejemplar> ejemplares) {
+			Collection<Prestamo> prestamos, Collection<Ejemplar> ejemplares) {
 		super();
 		this.isbn = isbn;
 		this.titulo = titulo;
 		this.numReserva = numReserva;
 		this.autores = autores;
 		this.prestamos = prestamos;
-		this.reserva = reserva;
 		this.ejemplares = ejemplares;
 	}
 
@@ -97,7 +90,6 @@ public class Titulo {
 				", numReserva=" + numReserva +
 				", autores=" + autores +
 				", prestamos=" + prestamos +
-				", reserva=" + reserva +
 				", ejemplares=" + ejemplares +
 				'}';
 	}
