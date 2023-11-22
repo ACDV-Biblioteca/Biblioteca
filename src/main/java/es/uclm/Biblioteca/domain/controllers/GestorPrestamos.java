@@ -151,19 +151,27 @@ public class GestorPrestamos {
 	}
 
 	@PostMapping("/DevolucionEjemplar")
-	public String realizarDevolucion(@RequestParam("userId") int userId, @RequestParam("isbn") Long isbn,
-			@RequestParam("ejemplarId") int ejemplarId, Model model, HttpSession session) {
+	public String realizarDevolucion( @RequestParam("isbn") Long isbn,
+			@RequestParam(value = "ejemplarId", required = false) Integer ejemplarId, Model model, HttpSession session) {
 		// log.info(((Usuario) session.getAttribute("usuario")).toString());
+		Usuario u = (Usuario) session.getAttribute("usuario");
+		if (u != null) {
+			model.addAttribute("usuario", u);
 
+		}
+	
+		List<Ejemplar> listaEjemplares = ejemplarDAO.findByPrestadosUsuario(u.getId());// Obtener la lista de ejemplares desde tu repositorio o
+		model.addAttribute("ejemplares", listaEjemplares);
 		@SuppressWarnings("deprecation")
-		Usuario usuario = usuarioDAO.getById(userId);
-		Titulo titulo = tituloDAO.getById(isbn);
-		Ejemplar ejemplar = ejemplarDAO.getById(ejemplarId);
-		if (!ejemplar.getTitulo().getIsbn().equals(titulo.getIsbn())) {
-			model.addAttribute("message", "El Isbn no concuerda con el id del ejemplar dado");
-		} else {
+		int idEjemplarSeleccionado = ejemplarId;
+		Ejemplar ejemplar = ejemplarDAO.findById(idEjemplarSeleccionado).orElse(null);
+		if (ejemplar == null) {
+			model.addAttribute("ejemplares", listaEjemplares);
+			model.addAttribute("message", "El ejemplar con ID " + idEjemplarSeleccionado + " no existe");
+			return "DevolucionEjemplar";
+		}
 
-			Prestamo prestamo = prestamoDAO.findByPrestamoId(ejemplar.getId(), usuario.getId(), titulo.getIsbn());
+			Prestamo prestamo = prestamoDAO.findByPrestamoId(ejemplar.getId(), u.getId(), ejemplar.getTitulo().getIsbn());
 			if (prestamo != null) {
 				LocalDate fechahoy = LocalDate.now();
 
@@ -172,8 +180,8 @@ public class GestorPrestamos {
 					LocalDate fechafutura = fechahoy.plusWeeks(2);
 
 					Date fechaFutura = Date.from(fechafutura.atStartOfDay(ZoneId.systemDefault()).toInstant());
-					usuario.setFechaFinPenalizacion(fechaFutura);
-					if (gestor.aplicarPenalizacion(usuario, usuarioDAO) == 1) {
+					u.setFechaFinPenalizacion(fechaFutura);
+					if (gestor.aplicarPenalizacion(u, usuarioDAO) == 1) {
 						prestamoDAO.delete(prestamo);
 						log.info("Delete: " + prestamo);
 
@@ -195,7 +203,7 @@ public class GestorPrestamos {
 				model.addAttribute("message", "No hay ningun prestamo con los datos obtenidos");
 
 			}
-		}
+		
 		return "DevolucionEjemplar";
 	}
 

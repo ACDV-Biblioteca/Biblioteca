@@ -22,4 +22,6 @@ public interface EjemplarDAO extends JpaRepository<Ejemplar, Integer>{
 	public List<Ejemplar> findByNoPrestados();
 	@Query(value="SELECT * FROM Ejemplar e WHERE EXISTS (SELECT 1 FROM Prestamo p WHERE p.ejemplar_id = e.id AND p.ACTIVO=TRUE)", nativeQuery = true)
 	public List<Ejemplar> findByPrestados();
+	@Query(value="SELECT * FROM Ejemplar e WHERE EXISTS (SELECT 1 FROM Prestamo p WHERE p.ejemplar_id = e.id AND p.ACTIVO=TRUE and p.usuario_id=:id_usuario)", nativeQuery = true)
+	public List<Ejemplar> findByPrestadosUsuario(int id_usuario);
 }
