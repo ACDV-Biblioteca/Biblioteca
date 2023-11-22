@@ -29,6 +29,8 @@ public class Ejemplar {
 	
 	@OneToMany(mappedBy = "ejemplar")
     private Collection<Prestamo> prestamos;
+	@OneToMany(mappedBy = "ejemplar")
+	private Collection<Reserva> reserva;
 
 	public Ejemplar() {
 		super();
