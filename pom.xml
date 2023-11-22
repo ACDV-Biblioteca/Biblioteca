@@ -5,6 +5,7 @@
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>3.1.4</version>
+		
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>es.uclm</groupId>
@@ -12,8 +13,15 @@
 	<version>1.0.0</version>
 	<name>Biblioteca</name>
 	<description>Proyecto Biblioteca</description>
+	<packaging>jar</packaging>
+
 	<properties>
 		<java.version>17</java.version>
+		
+		<sonar.projectKey>victorcentellas_Biblioteca</sonar.projectKey>
+		<sonar.organization>victorcentellas</sonar.organization>
+		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
+		<sonar.login>51d8b92994d8162a37bcb56a95e9803e3554749d</sonar.login>
 	</properties>
 	<dependencies>
 		<dependency>
