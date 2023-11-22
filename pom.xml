@@ -21,7 +21,6 @@
 		<sonar.projectKey>victorcentellas_Biblioteca</sonar.projectKey>
 		<sonar.organization>victorcentellas</sonar.organization>
 		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
-		<sonar.token>51d8b92994d8162a37bcb56a95e9803e3554749d</sonar.token>
 	</properties>
 	<dependencies>
 		<dependency>
