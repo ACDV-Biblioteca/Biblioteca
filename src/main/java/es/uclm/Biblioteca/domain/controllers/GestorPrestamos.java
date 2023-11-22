@@ -101,74 +101,73 @@ public class GestorPrestamos {
 	 * @param idEjemplar
 	 * @param idUsuario
 	 */
-	@GetMapping("/DevolucionEjemplar")
+	@GetMapping("/DevolucionUsuario")
 	public String mostrarFormularioDevolucion(HttpSession session,Model model) {
 		Usuario u=(Usuario) session.getAttribute("usuario");
 		 if (u != null) {
 	            model.addAttribute("usuario", u);
 
 		 }
-		return "DevolucionEjemplar";
+		return "DevolucionUsuario";
 	}
 
-	@PostMapping("/DevolucionEjemplar")
-	public String realizarDevolucion(@RequestParam("userId") int userId, @RequestParam("isbn") Long isbn,
-			@RequestParam("ejemplarId") int ejemplarId, Model model,HttpSession session) {
-		 	//log.info(((Usuario) session.getAttribute("usuario")).toString());
+	@PostMapping("/DevolucionUsuario")
+	public String realizarDevolucion(@RequestParam("isbn") Long isbn,
+									 @RequestParam("ejemplarId") int ejemplarId, Model model, HttpSession session) {
+		Usuario usuario = (Usuario) session.getAttribute("usuario");
 
-		
-		@SuppressWarnings("deprecation")
-		Usuario usuario = usuarioDAO.getById(userId);
-		Titulo titulo = tituloDAO.getById(isbn);
-		Ejemplar ejemplar = ejemplarDAO.getById(ejemplarId);
-		if (!ejemplar.getTitulo().getIsbn().equals(titulo.getIsbn())) {
-			model.addAttribute("message", "El Isbn no concuerda con el id del ejemplar dado");
-		} else {
+		if (usuario != null) {
 
-			Prestamo prestamo = prestamoDAO.findByPrestamoId(ejemplar.getId(), usuario.getId(), titulo.getIsbn());
-			if (prestamo!=null) {
-				LocalDate fechahoy = LocalDate.now();
+			@SuppressWarnings("deprecation")
 
-				Date fechaHoy = Date.from(fechahoy.atStartOfDay(ZoneId.systemDefault()).toInstant());
-				if (prestamo.getFechaFin().before(fechaHoy)) {
-					LocalDate fechafutura = fechahoy.plusWeeks(2);
+			Titulo titulo = tituloDAO.getById(isbn);
+			Ejemplar ejemplar = ejemplarDAO.getById(ejemplarId);
+			if (!ejemplar.getTitulo().getIsbn().equals(titulo.getIsbn())) {
+				model.addAttribute("message", "El Isbn no concuerda con el id del ejemplar dado");
+			} else {
 
-					Date fechaFutura = Date.from(fechafutura.atStartOfDay(ZoneId.systemDefault()).toInstant());
-					usuario.setFechaFinPenalizacion(fechaFutura);
-					if (gestor.aplicarPenalizacion(usuario, usuarioDAO) == 1) {
-						prestamoDAO.delete(prestamo);
-						log.info("Delete: " + prestamo);
+				Prestamo prestamo = prestamoDAO.findByPrestamoId(ejemplar.getId(), usuario.getId(), titulo.getIsbn());
+				if (prestamo != null) {
+					LocalDate fechahoy = LocalDate.now();
 
-						model.addAttribute("message",
-								"Devolución realizada con éxito con Penalizacion hasta " + fechaFutura.toString());
+					Date fechaHoy = Date.from(fechahoy.atStartOfDay(ZoneId.systemDefault()).toInstant());
+					if (prestamo.getFechaFin().before(fechaHoy)) {
+						LocalDate fechafutura = fechahoy.plusWeeks(2);
+
+						Date fechaFutura = Date.from(fechafutura.atStartOfDay(ZoneId.systemDefault()).toInstant());
+						usuario.setFechaFinPenalizacion(fechaFutura);
+						if (gestor.aplicarPenalizacion(usuario, usuarioDAO) == 1) {
+							prestamoDAO.delete(prestamo);
+							log.info("Delete: " + prestamo);
+
+							model.addAttribute("message",
+									"Devolución realizada con éxito con Penalizacion hasta " + fechaFutura.toString());
+
+						} else {
+							model.addAttribute("message", "Ha ocurrido un problema al aplicar la penalizacion");
+
+						}
 
 					} else {
-						model.addAttribute("message", "Ha ocurrido un problema al aplicar la penalizacion");
+						prestamoDAO.delete(prestamo);
+						log.info("Delete: " + prestamo);
+						model.addAttribute("message", "Devolución realizada con éxito");
 
 					}
-
 				} else {
-					prestamoDAO.delete(prestamo);
-					log.info("Delete: " + prestamo);
-					model.addAttribute("message", "Devolución realizada con éxito");
+					model.addAttribute("message", "No hay ningun prestamo con los datos obtenidos");
 
 				}
-			}else {
-				model.addAttribute("message", "No hay ningun prestamo con los datos obtenidos");
-
 			}
+			return "DevolucionEjemplar";
 		}
-		return "DevolucionEjemplar";
-	}
 
-	/**
-	 * 
-	 * @param idUsuario
-	 * @param isbn
-	 */
-	public void realizarReserva(String idUsuario, String isbn) {
-		// TODO - implement GestorPrestamos.realizarReserva
-		throw new UnsupportedOperationException();
-	}
+		/**
+		 *
+		 * @param idUsuario
+		 * @param isbn
+		 */
 
-}
+        return null;
+    }
+    }
