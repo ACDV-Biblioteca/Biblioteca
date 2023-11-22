@@ -1,28 +1,9 @@
 package es.uclm.Biblioteca.persistencia;
 
-public class AutorDAO extends EntityDAO {
+import org.springframework.data.jpa.repository.JpaRepository;
 
-	
-	public Object select(String id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+import es.uclm.Biblioteca.domain.entities.Autor;
 
-	@Override
-	public int insert(Object entity) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+public interface AutorDAO extends JpaRepository<Autor, Integer>{
 
-	@Override
-	public int update(Object entity) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public int delete(Object entity) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
 }

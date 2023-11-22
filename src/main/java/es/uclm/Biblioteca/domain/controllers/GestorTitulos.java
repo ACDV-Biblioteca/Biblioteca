@@ -14,136 +14,165 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.ui.Model;
 import es.uclm.Biblioteca.domain.entities.*;
 
 @Controller
 public class GestorTitulos {
-    private static final Logger log = LoggerFactory.getLogger(GestorTitulos.class);
+	private static final Logger log = LoggerFactory.getLogger(GestorTitulos.class);
 
+	@Autowired
+	private EjemplarDAO ejemplarDAO;
+	@Autowired
+	private TituloDAO tituloDAO;
+	@Autowired
+	private TituloAutorDAO tituloAutorDAO;
 
-    @Autowired
-    private EjemplarDAO ejemplarDAO;
-    @Autowired
-    private TituloDAO tituloDAO;
-    AutorDAO autorDAO;
+	@Autowired
+	private PrestamoDAO prestamoDAO;
+	@Autowired
+	private ReservaDAO reservaDAO;
+	@Autowired
+	private AutorDAO autorDAO;
 
-    /**
-     * @param titulo
-     * @param isbn
-     * @param autores
-     */
-    public Titulo altaTitulo(String titulo, String isbn, String[] autores) {
-        // TODO - implement GestorTitulos.altaT�tulo
-        throw new UnsupportedOperationException();
-    }
+	/**
+	 * @param titulo
+	 * @param isbn
+	 * @param autores
+	 */
+	public Titulo altaTitulo(String titulo, String isbn, String[] autores) {
+		// TODO - implement GestorTitulos.altaT�tulo
+		throw new UnsupportedOperationException();
+	}
 
-    /**
-     * @param t
-     */
-    public void actualizarTitulo(Titulo t) {
-        // TODO - implement GestorTitulos.actualizarTitulo
-        throw new UnsupportedOperationException();
-    }
+	/**
+	 * @param t
+	 */
+	public void actualizarTitulo(Titulo t) {
+		// TODO - implement GestorTitulos.actualizarTitulo
+		throw new UnsupportedOperationException();
+	}
 
-    @GetMapping("/DeleteAndUpdate")
-    public String borrarTitulo(Model model) {
-        model.addAttribute("titulo", new Titulo());
-        model.addAttribute("message", ""); // Inicializa el mensaje como vacío
+	@GetMapping("/DeleteAndUpdate")
+	public String borrarTitulo(Model model) {
+		model.addAttribute("titulos", tituloDAO.findAll());
+		model.addAttribute("message", ""); // Inicializa el mensaje como vacío
 
-        return "DeleteAndUpdate";
-    }
-    //  implementar para borrar el libro de la base de datos
+		return "DeleteAndUpdate";
+	}
+	// implementar para borrar el libro de la base de datos
 
+	@PostMapping("/DeleteAndUpdate")
+	public String borrarTitulo(@RequestParam(value = "tituloIsbn", required = false) Long tituloIsbn,
+			@ModelAttribute Titulo titulo, Model model) {
 
-    @PostMapping("/DeleteAndUpdate")
-    public String borrarTitulo(@ModelAttribute Titulo titulo, Model model) {
-        model.addAttribute("titulo", titulo);
-        Titulo t = tituloDAO.getById(titulo.getIsbn());
-        log.info("DELETE:" + t);
+		Long idTituloSeleccionado = tituloIsbn;
+		model.addAttribute("titulos", tituloDAO.findAll());
 
-        tituloDAO.delete(t);
-        model.addAttribute("message", "Se ha borrado el titulo " + t.getTitulo() + " con ISBN " + t.getIsbn());
-        return "DeleteAndUpdate";
-    }
+		Titulo t = tituloDAO.findById(idTituloSeleccionado).orElse(null);
+		if (t == null) {
+			model.addAttribute("titulos", tituloDAO.findAll());
+			model.addAttribute("message", "El titulo con ISBN " + idTituloSeleccionado + " no existe");
+			return "DeleteAndUpdate";
+		}else {
+		prestamoDAO.deleteByISBN(idTituloSeleccionado);
+		reservaDAO.deleteByISBN(idTituloSeleccionado);
 
-    /**
-     * @param t
-     */
-    @GetMapping("/AñadirEjemplar")
-    public String showAñadirEjemplarPage(Model model) {
-        model.addAttribute("titulo", new Titulo());
-        model.addAttribute("message", ""); // Inicializa el mensaje como vacío
+		ejemplarDAO.deleteByISBN(idTituloSeleccionado);
+		tituloAutorDAO.deleteByISBN(idTituloSeleccionado);
 
-        return "AñadirEjemplar";
-    }
+		prestamoDAO.deleteByISBN(idTituloSeleccionado);
 
-    @PostMapping("/AñadirEjemplar")
-    public String altaEjemplar(@ModelAttribute Titulo titulo, Model model) {
-        model.addAttribute("titulo", titulo);
-        Titulo t = tituloDAO.getById(titulo.getIsbn());
-        if(t!=null) {
-        	Ejemplar ejemplar = new Ejemplar();
-        	ejemplar.setTitulo(t);
-        	ejemplar.setId((int)ejemplarDAO.count()+1);
-        	ejemplarDAO.save(ejemplar);
-        	log.info("Saved: " + ejemplar);
-        	model.addAttribute("message", "Se ha añadido exitosamente el ejemplar con el titulo: "+ ejemplar.getTitulo()); // Inicializa el mensaje como vací
-        }else {
-        	
-              model.addAttribute("message", "No existe ese Titulo para añadir el ejemplar"); // Inicializa el mensaje como vací
-        }
-        return "AñadirEjemplar";
-    }
-    /**
-     * @param t
-     */
-    @GetMapping("/BorrarEjemplar")
-    public String showBorrarEjemplarPage(Model model) {
-        model.addAttribute("ejemplar", new Ejemplar());
-        model.addAttribute("message", ""); // Inicializa el mensaje como vacío
+		tituloDAO.deleteById(idTituloSeleccionado);
+		model.addAttribute("message", "Se ha borrado el titulo " + t.getTitulo() + " con ISBN " + t.getIsbn());
 
-        return "BorrarEjemplar";
-    }
+		}
+		return "DeleteAndUpdate";
+	}
 
-    @PostMapping("/BorrarEjemplar")
-    public String bajaEjemplar(@ModelAttribute Ejemplar ejemplar, Model model) {
-        model.addAttribute("ejemplar", ejemplar);
-        List<Ejemplar> ejemplarOpt2 = ejemplarDAO.findByIsbn(ejemplar.getTitulo().getIsbn());
+	/**
+	 * @param t
+	 */
+	@GetMapping("/AñadirEjemplar")
+	public String showAñadirEjemplarPage(Model model) {
+		model.addAttribute("titulo", new Titulo());
+		model.addAttribute("message", ""); // Inicializa el mensaje como vacío
 
-        // Si el Ejemplar existe, eliminarlo
-        if (!ejemplarOpt2.isEmpty()) {
-            if (ejemplarOpt2.size() == 1) {
-                ejemplarDAO.delete(ejemplarOpt2.get(ejemplarOpt2.size() - 1));
+		return "AñadirEjemplar";
+	}
 
-                log.info("Se ha borrado el ejemplar " + ejemplarOpt2.get(ejemplarOpt2.size() - 1).getId()
-                        + " con titulo " + ejemplarOpt2.get(ejemplarOpt2.size() - 1).getTitulo().getTitulo());
-                model.addAttribute("message",
-                        "Se ha borrado el ejemplar " + ejemplarOpt2.get(ejemplarOpt2.size() - 1).getId()
-                                + " con titulo " + ejemplarOpt2.get(ejemplarOpt2.size() - 1).getTitulo().getTitulo());
-                Titulo titulo = new Titulo();
-                titulo.setIsbn(ejemplar.getTitulo().getIsbn());
+	@PostMapping("/AñadirEjemplar")
+	public String altaEjemplar(@ModelAttribute Titulo titulo, Model model) {
+		model.addAttribute("titulo", titulo);
+		Titulo t = tituloDAO.getById(titulo.getIsbn());
+		if (t != null) {
+			Ejemplar ejemplar = new Ejemplar();
+			ejemplar.setTitulo(t);
+			ejemplar.setId((int) ejemplarDAO.count() + 1);
+			ejemplarDAO.save(ejemplar);
+			log.info("Saved: " + ejemplar);
+			model.addAttribute("message",
+					"Se ha añadido exitosamente el ejemplar con el titulo: " + ejemplar.getTitulo()); // Inicializa el
+																										// mensaje como
+																										// vací
+		} else {
 
-            } else {
-                ejemplarDAO.delete(ejemplarOpt2.get(ejemplarOpt2.size() - 1));
-                model.addAttribute("message",
-                        "Se ha borrado el ejemplar " + ejemplarOpt2.get(ejemplarOpt2.size() - 1).getId()
-                                + " con titulo " + ejemplarOpt2.get(ejemplarOpt2.size() - 1).getTitulo().getTitulo());
+			model.addAttribute("message", "No existe ese Titulo para añadir el ejemplar"); // Inicializa el mensaje como
+																							// vací
+		}
+		return "AñadirEjemplar";
+	}
 
-                log.info("Se ha borrado el ejemplar " + ejemplarOpt2.get(ejemplarOpt2.size() - 1).getId()
-                        + " con titulo " + ejemplarOpt2.get(ejemplarOpt2.size() - 1).getTitulo().getTitulo());
+	/**
+	 * @param t
+	 */
+	@GetMapping("/BorrarEjemplar")
+	public String showBorrarEjemplarPage(Model model) {
+		model.addAttribute("ejemplar", new Ejemplar());
+		model.addAttribute("message", ""); // Inicializa el mensaje como vacío
 
-            }
+		return "BorrarEjemplar";
+	}
 
-        } else {
-            // Manejar el caso en el que el Ejemplar no se encuentra
+	@PostMapping("/BorrarEjemplar")
+	public String bajaEjemplar(@ModelAttribute Ejemplar ejemplar, Model model) {
+		model.addAttribute("ejemplar", ejemplar);
+		List<Ejemplar> ejemplarOpt2 = ejemplarDAO.findByIsbn(ejemplar.getTitulo().getIsbn());
 
-            model.addAttribute("message", "No se encontró el ejemplar con ese ISBN.");
-            log.info("Este ejemplar no existe");
+		// Si el Ejemplar existe, eliminarlo
+		if (!ejemplarOpt2.isEmpty()) {
+			if (ejemplarOpt2.size() == 1) {
+				ejemplarDAO.delete(ejemplarOpt2.get(ejemplarOpt2.size() - 1));
 
-        }
+				log.info("Se ha borrado el ejemplar " + ejemplarOpt2.get(ejemplarOpt2.size() - 1).getId()
+						+ " con titulo " + ejemplarOpt2.get(ejemplarOpt2.size() - 1).getTitulo().getTitulo());
+				model.addAttribute("message",
+						"Se ha borrado el ejemplar " + ejemplarOpt2.get(ejemplarOpt2.size() - 1).getId()
+								+ " con titulo " + ejemplarOpt2.get(ejemplarOpt2.size() - 1).getTitulo().getTitulo());
+				Titulo titulo = new Titulo();
+				titulo.setIsbn(ejemplar.getTitulo().getIsbn());
 
-        return "BorrarEjemplar";
-    }
+			} else {
+				ejemplarDAO.delete(ejemplarOpt2.get(ejemplarOpt2.size() - 1));
+				model.addAttribute("message",
+						"Se ha borrado el ejemplar " + ejemplarOpt2.get(ejemplarOpt2.size() - 1).getId()
+								+ " con titulo " + ejemplarOpt2.get(ejemplarOpt2.size() - 1).getTitulo().getTitulo());
+
+				log.info("Se ha borrado el ejemplar " + ejemplarOpt2.get(ejemplarOpt2.size() - 1).getId()
+						+ " con titulo " + ejemplarOpt2.get(ejemplarOpt2.size() - 1).getTitulo().getTitulo());
+
+			}
+
+		} else {
+			// Manejar el caso en el que el Ejemplar no se encuentra
+
+			model.addAttribute("message", "No se encontró el ejemplar con ese ISBN.");
+			log.info("Este ejemplar no existe");
+
+		}
+
+		return "BorrarEjemplar";
+	}
 
 }
