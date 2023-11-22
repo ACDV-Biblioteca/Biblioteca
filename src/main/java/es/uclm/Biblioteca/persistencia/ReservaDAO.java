@@ -1,28 +1,17 @@
 package es.uclm.Biblioteca.persistencia;
 
-public class ReservaDAO extends EntityDAO {
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
+import es.uclm.Biblioteca.domain.entities.Reserva;
+import es.uclm.Biblioteca.domain.entities.Reserva.ReservaId;
+import jakarta.transaction.Transactional;
 
-	@Override
-	public Object select(String id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public int insert(Object entity) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public int update(Object entity) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public int delete(Object entity) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+@Repository
+public interface ReservaDAO extends JpaRepository<Reserva,ReservaId>{
+@Modifying
+@Query(value="DELETE FROM DERBYUSER.RESERVA WHERE EJEMPLAR_ID =:ejemplar_id",nativeQuery=true)
+@Transactional
+public int deleteByEjemplar(int ejemplar_id);
 }

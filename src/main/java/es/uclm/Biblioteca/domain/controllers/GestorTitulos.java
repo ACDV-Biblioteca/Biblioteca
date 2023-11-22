@@ -88,6 +88,7 @@ public class GestorTitulos {
         	ejemplar.setId((int)ejemplarDAO.count()+1);
         	ejemplarDAO.save(ejemplar);
         	log.info("Saved: " + ejemplar);
+        	model.addAttribute("message", "Se ha añadido exitosamente el ejemplar con el titulo: "+ ejemplar.getTitulo()); // Inicializa el mensaje como vací
         }else {
         	
               model.addAttribute("message", "No existe ese Titulo para añadir el ejemplar"); // Inicializa el mensaje como vací
