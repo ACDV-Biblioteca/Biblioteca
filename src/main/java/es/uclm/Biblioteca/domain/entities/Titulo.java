@@ -16,14 +16,14 @@ public class Titulo {
 	@Id
 	private Long isbn;
 
-	@Column
-	private String titulo;
+	@Column(name="nombre")
+	private String nombre;
 
 	@Column
 	private int numReserva;
 
 	@OneToMany(mappedBy = "titulo")
-	private Collection<TituloAutor> autores;
+	private List<TituloAutor> autores;
 	@OneToMany(mappedBy = "titulo")
 	private Collection<Prestamo> prestamos;
 
@@ -36,11 +36,11 @@ public class Titulo {
 	public void setIsbn(Long isbn) {
 		this.isbn = isbn;
 	}
-	public String getTitulo() {
-		return titulo;
+	public String getNombre() {
+		return nombre;
 	}
-	public void setTitulo(String titulo) {
-		this.titulo = titulo;
+	public void setNombre(String nombre) {
+		this.nombre = nombre;
 	}
 	public int getNumReserva() {
 		return numReserva;
@@ -48,10 +48,10 @@ public class Titulo {
 	public void setNumReserva(int numReserva) {
 		this.numReserva = numReserva;
 	}
-	public Collection<TituloAutor> getAutores() {
+	public List<TituloAutor> getAutores() {
 		return autores;
 	}
-	public void setAutores(Collection<TituloAutor> autores) {
+	public void setAutores(List<TituloAutor> autores) {
 		this.autores = autores;
 	}
 	public Collection<Prestamo> getPrestamos() {
@@ -71,11 +71,11 @@ public class Titulo {
 		super();
 		
 	}
-	public Titulo(Long isbn, String titulo, int numReserva, Collection<TituloAutor> autores,
+	public Titulo(Long isbn, String nombre, int numReserva, List<TituloAutor> autores,
 			Collection<Prestamo> prestamos, Collection<Ejemplar> ejemplares) {
 		super();
 		this.isbn = isbn;
-		this.titulo = titulo;
+		this.nombre = nombre;
 		this.numReserva = numReserva;
 		this.autores = autores;
 		this.prestamos = prestamos;
@@ -86,7 +86,7 @@ public class Titulo {
 	public String toString() {
 		return "Titulo{" +
 				"isbn=" + isbn +
-				", titulo='" + titulo + '\'' +
+				", titulo='" + nombre + '\'' +
 				", numReserva=" + numReserva +
 				", autores=" + autores +
 				", prestamos=" + prestamos +

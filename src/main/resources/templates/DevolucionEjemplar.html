@@ -13,7 +13,7 @@
             <li th:each="ejemplar : ${ejemplares}">
                 <label th:for="${'ejemplar_' + ejemplar.id}">
                     <input type="radio" th:id="${'ejemplar_' + ejemplar.id}" th:name="ejemplarId" th:value="${ejemplar.id}" />
-                    <span th:text="${ejemplar.id + ' - ' + ejemplar.titulo.titulo}" />
+                    <span th:text="${ejemplar.id + ' - ' + ejemplar.titulo.nombre}" />
                 </label>
             </li>
         </ul>

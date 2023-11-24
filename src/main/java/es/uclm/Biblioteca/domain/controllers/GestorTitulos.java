@@ -2,6 +2,9 @@ package es.uclm.Biblioteca.domain.controllers;
 
 import es.uclm.Biblioteca.persistencia.*;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
@@ -49,9 +52,96 @@ public class GestorTitulos {
 	/**
 	 * @param t
 	 */
-	public void actualizarTitulo(Titulo t) {
-		// TODO - implement GestorTitulos.actualizarTitulo
-		throw new UnsupportedOperationException();
+
+	@GetMapping("/ActualizarTitulo")
+	public String actualizarTitulo(Model model) {
+		model.addAttribute("Titulos", tituloDAO.findAll());
+		model.addAttribute("Titulo", new Titulo());
+		model.addAttribute("message", ""); // Inicializa el mensaje como vacío
+
+		return "ActualizarTitulo";
+	}
+
+	@PostMapping("/ActualizarTitulo")
+	public String actualizarTituloPost(@RequestParam(value = "tituloIsbn", required = false) String tituloIsbn,
+			@ModelAttribute Titulo titulo, Model model) {
+		model.addAttribute("Titulos", tituloDAO.findAll());
+		model.addAttribute("message", ""); // Inicializa el mensaje como vacío
+
+		Long idTituloSeleccionado = Long.parseLong(tituloIsbn);
+
+		Titulo t = tituloDAO.findById(idTituloSeleccionado).orElse(null);
+		if (t == null) {
+			model.addAttribute("Titulos", tituloDAO.findAll());
+			model.addAttribute("message", "El titulo con ISBN " + idTituloSeleccionado + " no existe");
+			return "ActualizarTitulo";
+		} else {
+
+			model.addAttribute("Titulos", tituloDAO.findAll());
+
+			model.addAttribute("Titulo", t);
+
+			return "actualizar-titulo";
+		}
+		// return "ActualizarTitulo";
+	}
+
+	@GetMapping("/actualizar-titulo")
+	public String actualizarTituloValores(Model model) {
+		model.addAttribute("Titulo", new Titulo());
+		model.addAttribute("tituloTitulo", new String());
+		model.addAttribute("message", ""); // Inicializa el mensaje como vacío
+
+		return "actualizar-titulo";
+	}
+
+	@PostMapping("/actualizar-titulo")
+	public String actualizarTituloValoresPost(@ModelAttribute Titulo titulo, Model model) {
+		model.addAttribute("Titulo", titulo);
+		model.addAttribute("tituloTitulo", new String(titulo.getNombre()));
+		model.addAttribute("message", ""); // Inicializa el mensaje como vacío
+
+		Long isbn = titulo.getIsbn();
+		String nombre = titulo.getNombre();
+		int numReserva = titulo.getNumReserva();
+		List<Autor> autores = autorDAO.findAutoresByIsbn(isbn);
+		// Titulo t = tituloDAO.getById(isbn);
+		for (Autor autor : autores) {
+			log.info(" autor1 " + autor.toString());
+		}
+		if (titulo.getAutores().isEmpty()) {
+			model.addAttribute("message",
+					"Tienes que añadir al menos 1 autor");
+			return "actualizar-titulo";
+		} else {
+			for (TituloAutor tituloautor : titulo.getAutores()) {
+				String nombreAutor = tituloautor.getAutor().getNombre();
+				String apellidoAutor = tituloautor.getAutor().getApellidos();
+				Autor a = autorDAO.findByNombreApellidos(nombreAutor, apellidoAutor);
+
+				if (a == null) {
+					model.addAttribute("message",
+							"El autor con nombre " + nombreAutor + " y apellido " + apellidoAutor + " no existe ");
+
+					return "actualizar-titulo";
+				} else {
+					// log.info(" autor2 " +a.toString());
+					TituloAutor ta = new TituloAutor(titulo, a);
+					if ((autores.contains(a))) {
+						//tituloAutorDAO.save(ta);
+						//log.info("Delete : " + ta);
+
+					} else {
+						// tituloAutorDAO.delete(ta);
+						tituloAutorDAO.save(ta);
+						log.info("Saved : " + ta);
+					}
+
+				}
+			}
+		}
+
+		return "actualizar-titulo";
 	}
 
 	@GetMapping("/DeleteAndUpdate")
@@ -75,17 +165,17 @@ public class GestorTitulos {
 			model.addAttribute("titulos", tituloDAO.findAll());
 			model.addAttribute("message", "El titulo con ISBN " + idTituloSeleccionado + " no existe");
 			return "DeleteAndUpdate";
-		}else {
-		prestamoDAO.deleteByISBN(idTituloSeleccionado);
-		reservaDAO.deleteByISBN(idTituloSeleccionado);
+		} else {
+			prestamoDAO.deleteByISBN(idTituloSeleccionado);
+			reservaDAO.deleteByISBN(idTituloSeleccionado);
 
-		ejemplarDAO.deleteByISBN(idTituloSeleccionado);
-		tituloAutorDAO.deleteByISBN(idTituloSeleccionado);
+			ejemplarDAO.deleteByISBN(idTituloSeleccionado);
+			tituloAutorDAO.deleteByISBN(idTituloSeleccionado);
 
-		prestamoDAO.deleteByISBN(idTituloSeleccionado);
+			prestamoDAO.deleteByISBN(idTituloSeleccionado);
 
-		tituloDAO.deleteById(idTituloSeleccionado);
-		model.addAttribute("message", "Se ha borrado el titulo " + t.getTitulo() + " con ISBN " + t.getIsbn());
+			tituloDAO.deleteById(idTituloSeleccionado);
+			model.addAttribute("message", "Se ha borrado el titulo " + t.getNombre() + " con ISBN " + t.getIsbn());
 
 		}
 		return "DeleteAndUpdate";
@@ -146,10 +236,10 @@ public class GestorTitulos {
 				ejemplarDAO.delete(ejemplarOpt2.get(ejemplarOpt2.size() - 1));
 
 				log.info("Se ha borrado el ejemplar " + ejemplarOpt2.get(ejemplarOpt2.size() - 1).getId()
-						+ " con titulo " + ejemplarOpt2.get(ejemplarOpt2.size() - 1).getTitulo().getTitulo());
+						+ " con titulo " + ejemplarOpt2.get(ejemplarOpt2.size() - 1).getTitulo().getNombre());
 				model.addAttribute("message",
 						"Se ha borrado el ejemplar " + ejemplarOpt2.get(ejemplarOpt2.size() - 1).getId()
-								+ " con titulo " + ejemplarOpt2.get(ejemplarOpt2.size() - 1).getTitulo().getTitulo());
+								+ " con titulo " + ejemplarOpt2.get(ejemplarOpt2.size() - 1).getTitulo().getNombre());
 				Titulo titulo = new Titulo();
 				titulo.setIsbn(ejemplar.getTitulo().getIsbn());
 
@@ -157,10 +247,10 @@ public class GestorTitulos {
 				ejemplarDAO.delete(ejemplarOpt2.get(ejemplarOpt2.size() - 1));
 				model.addAttribute("message",
 						"Se ha borrado el ejemplar " + ejemplarOpt2.get(ejemplarOpt2.size() - 1).getId()
-								+ " con titulo " + ejemplarOpt2.get(ejemplarOpt2.size() - 1).getTitulo().getTitulo());
+								+ " con titulo " + ejemplarOpt2.get(ejemplarOpt2.size() - 1).getTitulo().getNombre());
 
 				log.info("Se ha borrado el ejemplar " + ejemplarOpt2.get(ejemplarOpt2.size() - 1).getId()
-						+ " con titulo " + ejemplarOpt2.get(ejemplarOpt2.size() - 1).getTitulo().getTitulo());
+						+ " con titulo " + ejemplarOpt2.get(ejemplarOpt2.size() - 1).getTitulo().getNombre());
 
 			}
 

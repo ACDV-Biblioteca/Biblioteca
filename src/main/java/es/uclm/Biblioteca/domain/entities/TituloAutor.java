@@ -48,6 +48,14 @@ public class TituloAutor  implements Serializable {
         }
 
     }
+    public TituloAutor() {
+		super();
+    }
+	public TituloAutor(Titulo titulo, Autor autor) {
+		super();
+		this.titulo = titulo;
+		this.autor = autor;
+	}
 
 	public Titulo getTitulo() {
 		return titulo;

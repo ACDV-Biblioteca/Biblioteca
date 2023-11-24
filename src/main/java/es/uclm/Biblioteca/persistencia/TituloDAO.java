@@ -13,6 +13,5 @@ import es.uclm.Biblioteca.domain.entities.Titulo;
 public interface TituloDAO extends JpaRepository<Titulo, Long> {
 
 
-
 }
 

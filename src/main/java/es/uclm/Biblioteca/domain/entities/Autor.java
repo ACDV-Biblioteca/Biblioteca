@@ -26,7 +26,63 @@ public class Autor {
 	    private String apellidos;
 
 	    @OneToMany(mappedBy = "autor")
-	    private Collection<TituloAutor> titulos;
+	    private List<TituloAutor> titulos;
+		public Autor() {
+		
+		}
+
+		public Autor(int id, String nombre, String apellidos, List<TituloAutor> titulos) {
+			super();
+			this.id = id;
+			this.nombre = nombre;
+			this.apellidos = apellidos;
+			this.titulos = titulos;
+		}
+
+		public int getId() {
+			return id;
+		}
+
+		public void setId(int id) {
+			this.id = id;
+		}
+
+		public String getNombre() {
+			return nombre;
+		}
+
+		public void setNombre(String nombre) {
+			this.nombre = nombre;
+		}
+
+		public String getApellidos() {
+			return apellidos;
+		}
+
+		public void setApellidos(String apellidos) {
+			this.apellidos = apellidos;
+		}
+
+		public List<TituloAutor> getTitulos() {
+			return titulos;
+		}
+
+		public void setTitulos(List<TituloAutor> titulos) {
+			this.titulos = titulos;
+		}
+
+		@Override
+		public String toString() {
+			return "Autor [id=" + id + ", nombre=" + nombre + ", apellidos=" + apellidos + ", titulos=" + titulos + "]";
+		}
+		@Override
+		public boolean equals(Object o) {
+		    if (this == o) return true;
+		    if (o == null || getClass() != o.getClass()) return false;
+		    Autor autor = (Autor) o;
+		    return Objects.equals(nombre, autor.nombre) &&
+		            Objects.equals(apellidos, autor.apellidos) &&  Objects.equals(id, autor.id) ;
+		}
 
 
     // Constructor, getters y setters
