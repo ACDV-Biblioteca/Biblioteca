@@ -1,6 +1,7 @@
 package es.uclm.Biblioteca.domain.entities;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import jakarta.persistence.*;
 
@@ -72,6 +73,8 @@ public class TituloAutor  implements Serializable {
 	public void setAutor(Autor autor) {
 		this.autor = autor;
 	}
+	
+	
     
 }
 

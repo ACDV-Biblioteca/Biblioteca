@@ -104,43 +104,43 @@ public class GestorTitulos {
 		Long isbn = titulo.getIsbn();
 		String nombre = titulo.getNombre();
 		int numReserva = titulo.getNumReserva();
-		List<Autor> autores = autorDAO.findAutoresByIsbn(isbn);
-		// Titulo t = tituloDAO.getById(isbn);
-		for (Autor autor : autores) {
-			log.info(" autor1 " + autor.toString());
-		}
-		if (titulo.getAutores().isEmpty()) {
-			model.addAttribute("message",
-					"Tienes que añadir al menos 1 autor");
+		Titulo t = tituloDAO.getById(isbn);
+		List<TituloAutor> autores = new ArrayList<TituloAutor>();
+		if (t.equals(titulo)) {
+			model.addAttribute("message", "No has hecho ningun cambio");
 			return "actualizar-titulo";
 		} else {
-			for (TituloAutor tituloautor : titulo.getAutores()) {
-				String nombreAutor = tituloautor.getAutor().getNombre();
-				String apellidoAutor = tituloautor.getAutor().getApellidos();
-				Autor a = autorDAO.findByNombreApellidos(nombreAutor, apellidoAutor);
 
-				if (a == null) {
-					model.addAttribute("message",
-							"El autor con nombre " + nombreAutor + " y apellido " + apellidoAutor + " no existe ");
+			if (titulo.getAutores().equals(null) || titulo.getAutores().isEmpty()) {
+				model.addAttribute("message", "Tienes que añadir al menos 1 autor");
+				return "actualizar-titulo";
+			} else {
+				t.setNombre(nombre);
+				t.setNumReserva(numReserva);
 
-					return "actualizar-titulo";
-				} else {
-					// log.info(" autor2 " +a.toString());
-					TituloAutor ta = new TituloAutor(titulo, a);
-					if ((autores.contains(a))) {
-						//tituloAutorDAO.save(ta);
-						//log.info("Delete : " + ta);
+				for (TituloAutor tituloautor : titulo.getAutores()) {
+					String nombreAutor = tituloautor.getAutor().getNombre();
+					String apellidoAutor = tituloautor.getAutor().getApellidos();
+					Autor a = autorDAO.findByNombreApellidos(nombreAutor, apellidoAutor);
 
+					if (a == null) {
+						model.addAttribute("message",
+								"El autor con nombre " + nombreAutor + " y apellido " + apellidoAutor + " no existe ");
+
+						return "actualizar-titulo";
 					} else {
-						// tituloAutorDAO.delete(ta);
-						tituloAutorDAO.save(ta);
-						log.info("Saved : " + ta);
+
+						TituloAutor ta = new TituloAutor(t, a);
+						autores.add(ta);
+
 					}
-
 				}
+				t.setAutores(autores);
+				tituloDAO.save(t);
+				log.info("Saved : +"+ t);
 			}
-		}
 
+		}
 		return "actualizar-titulo";
 	}
 

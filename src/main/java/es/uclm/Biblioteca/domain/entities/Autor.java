@@ -71,19 +71,7 @@ public class Autor {
 			this.titulos = titulos;
 		}
 
-		@Override
-		public String toString() {
-			return "Autor [id=" + id + ", nombre=" + nombre + ", apellidos=" + apellidos + ", titulos=" + titulos + "]";
-		}
-		@Override
-		public boolean equals(Object o) {
-		    if (this == o) return true;
-		    if (o == null || getClass() != o.getClass()) return false;
-		    Autor autor = (Autor) o;
-		    return Objects.equals(nombre, autor.nombre) &&
-		            Objects.equals(apellidos, autor.apellidos) &&  Objects.equals(id, autor.id) ;
-		}
-
+		
 
     // Constructor, getters y setters
 }

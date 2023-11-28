@@ -2,6 +2,10 @@ package es.uclm.Biblioteca.domain.entities;
 
 import java.util.*;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import es.uclm.Biblioteca.domain.controllers.GestorTitulos;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -13,8 +17,12 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "Titulo")
 public class Titulo {
+	private static final Logger log = LoggerFactory.getLogger(GestorTitulos.class);
+
 	@Id
 	private Long isbn;
+
+	
 
 	@Column(name="nombre")
 	private String nombre;
@@ -69,6 +77,7 @@ public class Titulo {
 	}
 	public Titulo() {
 		super();
+		this.autores=new ArrayList();
 		
 	}
 	public Titulo(Long isbn, String nombre, int numReserva, List<TituloAutor> autores,
@@ -93,4 +102,6 @@ public class Titulo {
 				", ejemplares=" + ejemplares +
 				'}';
 	}
+	
+	
 }
