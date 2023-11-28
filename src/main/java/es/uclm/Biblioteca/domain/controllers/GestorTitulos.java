@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.ui.Model;
 import es.uclm.Biblioteca.domain.entities.*;
+import es.uclm.Biblioteca.domain.entities.TituloAutor.TituloAutorId;
 
 @Controller
 public class GestorTitulos {
@@ -121,23 +122,28 @@ public class GestorTitulos {
 				for (TituloAutor tituloautor : titulo.getAutores()) {
 					String nombreAutor = tituloautor.getAutor().getNombre();
 					String apellidoAutor = tituloautor.getAutor().getApellidos();
-					Autor a = autorDAO.findByNombreApellidos(nombreAutor, apellidoAutor);
 
-					if (a == null) {
+					// Verificar si existe el primer nombre y primer apellido
+					Autor autor = autorDAO.findByNombreApellidos(nombreAutor, apellidoAutor);
+
+					if (autor == null) {
 						model.addAttribute("message",
 								"El autor con nombre " + nombreAutor + " y apellido " + apellidoAutor + " no existe ");
 
 						return "actualizar-titulo";
 					} else {
+						TituloAutor ta = new TituloAutor();
+						ta.setAutor(autor);
+						ta.setTitulo(t);
+						tituloAutorDAO.save(ta);
 
-						TituloAutor ta = new TituloAutor(t, a);
 						autores.add(ta);
 
 					}
 				}
 				t.setAutores(autores);
 				tituloDAO.save(t);
-				log.info("Saved : +"+ t);
+				log.info("Saved : +" + t);
 			}
 
 		}

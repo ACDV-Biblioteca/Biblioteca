@@ -27,7 +27,7 @@ public class TituloAutor  implements Serializable {
         public TituloAutorId() {
         }
 
-        public TituloAutorId(Ejemplar ejemplar, Autor autor, Titulo titulo) {
+        public TituloAutorId( Autor autor, Titulo titulo) {
             this.autor = autor;
             this.titulo = titulo;
         }
