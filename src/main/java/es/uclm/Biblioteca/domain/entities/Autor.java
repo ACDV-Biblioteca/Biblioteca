@@ -26,8 +26,52 @@ public class Autor {
 	    private String apellidos;
 
 	    @OneToMany(mappedBy = "autor")
-	    private Collection<TituloAutor> titulos;
+	    private List<TituloAutor> titulos;
+		public Autor() {
+		
+		}
 
+		public Autor(int id, String nombre, String apellidos, List<TituloAutor> titulos) {
+			super();
+			this.id = id;
+			this.nombre = nombre;
+			this.apellidos = apellidos;
+			this.titulos = titulos;
+		}
+
+		public int getId() {
+			return id;
+		}
+
+		public void setId(int id) {
+			this.id = id;
+		}
+
+		public String getNombre() {
+			return nombre;
+		}
+
+		public void setNombre(String nombre) {
+			this.nombre = nombre;
+		}
+
+		public String getApellidos() {
+			return apellidos;
+		}
+
+		public void setApellidos(String apellidos) {
+			this.apellidos = apellidos;
+		}
+
+		public List<TituloAutor> getTitulos() {
+			return titulos;
+		}
+
+		public void setTitulos(List<TituloAutor> titulos) {
+			this.titulos = titulos;
+		}
+
+		
 
     // Constructor, getters y setters
 }

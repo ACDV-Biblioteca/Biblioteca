@@ -32,9 +32,9 @@ public class Usuario {
 	private String contraseña;
 	
 	@OneToMany(mappedBy = "usuario", fetch = FetchType.EAGER)
-	private Collection<Prestamo> prestamos;
+	private List<Prestamo> prestamos;
 	@OneToMany(mappedBy = "usuario", fetch = FetchType.EAGER)
-	private Collection<Reserva> reservas;
+	private List<Reserva> reservas;
 	
 	public int getId() {
 		return id;
@@ -66,17 +66,17 @@ public class Usuario {
 	public void setContraseña(String contraseña) {
 		this.contraseña = contraseña;
 	}
-	public Collection<Prestamo> getPrestamos() {
+	public List<Prestamo> getPrestamos() {
 		return prestamos;
 	}
-	public void setPrestamos(Collection<Prestamo> prestamos) {
+	public void setPrestamos(List<Prestamo> prestamos) {
 		this.prestamos = prestamos;
 	}
 	public Usuario() {
 		super();
 	}
 	public Usuario(int id, String nombre, String apellidos, Date fecha_Fin_Penalizacion, String contraseña,
-			Collection<Prestamo> prestamos, Collection<Reserva> reservas) {
+			List<Prestamo> prestamos, List<Reserva> reservas) {
 		super();
 		this.id = id;
 		this.nombre = nombre;
@@ -92,10 +92,10 @@ public class Usuario {
 				+ fecha_Fin_Penalizacion + ", contraseña=" + contraseña + ", prestamos=" + prestamos + ", reservas="
 				+ reservas + "]";
 	}
-	public Collection<Reserva> getReservas() {
+	public List<Reserva> getReservas() {
 		return reservas;
 	}
-	public void setReservas(Collection<Reserva> reservas) {
+	public void setReservas(List<Reserva> reservas) {
 		this.reservas = reservas;
 	}
 
