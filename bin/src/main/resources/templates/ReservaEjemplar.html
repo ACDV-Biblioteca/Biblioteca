@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Seleccionar Ejemplar</title>
+</head>
+<body>
+    <h1>Lista de Ejemplares Disponibles</h1>
+    <form action="/ReservaEjemplar" th:object="${reserva}" method="post"> 
+    		<label for="idUsuario">ID de Usuario:</label>
+            <input type="number" name="userId" th:value="${userId}" /> <!-- Campo oculto con el ID del usuario -->
+    
+        <ul>
+            <li th:each="ejemplar : ${ejemplares}">
+                <label th:for="${'ejemplar_' + ejemplar.id}">
+                    <input type="radio" th:id="${'ejemplar_' + ejemplar.id}" th:name="ejemplarId" th:value="${ejemplar.id}" />
+                    <span th:text="${ejemplar.id + ' - ' + ejemplar.titulo.nombre}" />
+                </label>
+            </li>
+        </ul>
+        <button type="submit">Seleccionar</button>
+    </form>
+    <div th:if="${mensaje}">
+        <p th:text="${mensaje}" />
+    </div>
+</body>
+</html>

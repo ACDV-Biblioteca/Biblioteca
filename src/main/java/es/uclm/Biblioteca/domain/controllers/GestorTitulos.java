@@ -45,9 +45,69 @@ public class GestorTitulos {
 	 * @param isbn
 	 * @param autores
 	 */
-	public Titulo altaTitulo(String titulo, String isbn, String[] autores) {
-		// TODO - implement GestorTitulos.altaT�tulo
-		throw new UnsupportedOperationException();
+	@GetMapping("/dar-alta-titulo")
+	public String showAltaTitulo(Model model) {
+		model.addAttribute("Titulo", new Titulo());
+		model.addAttribute("tituloTitulo", new String());
+		model.addAttribute("message", ""); // Inicializa el mensaje como vacío
+		return "dar-alta-titulo";
+	}
+
+	@PostMapping("/dar-alta-titulo")
+	public String altaTitulo(@ModelAttribute Titulo titulo, Model model) {
+		model.addAttribute("Titulo", titulo);
+		model.addAttribute("tituloTitulo", new String(titulo.getNombre()));
+		model.addAttribute("message", ""); // Inicializa el mensaje como vacío
+		
+		Long isbn = titulo.getIsbn();
+		List<Autor> autores = autorDAO.findAutoresByIsbn(isbn);
+		
+		for (Autor autor : autores) {
+			log.info(" autor1 " + autor.toString());
+		}
+		//Comprobamos si ha añadido algun autor
+		if (titulo.getAutores().isEmpty() || titulo.getAutores().equals(null)) {
+			model.addAttribute("message", "Tienes que añadir al menos 1 autor");
+			
+			return "dar-alta-titulo";
+		}//Comprobamos si ha añadido un Isbn	
+		else if (titulo.getIsbn()>= 0) {
+			model.addAttribute("message", "Tienes que añadir un Isbn");
+			
+			return "dar-alta-titulo";	
+		}
+		else {
+			for (TituloAutor tituloautor : titulo.getAutores()) {
+				
+				String nombreAutor = tituloautor.getAutor().getNombre();
+				String apellidoAutor = tituloautor.getAutor().getApellidos();
+				Long ISBN = tituloautor.getTitulo().getIsbn();
+				// Verificar si existe el primer nombre y primer apellido
+				Autor autor = autorDAO.findByNombreApellidos(nombreAutor, apellidoAutor);
+				Titulo t = tituloDAO.findByIsbn(ISBN);
+				if (autor == null) {
+					model.addAttribute("message",
+							"El autor con nombre " + nombreAutor + " y apellido " + apellidoAutor + " no existe ");
+
+					return "dar-alta-titulo";
+				}
+				//Si que existe el autor
+				else {
+					if(t == null) {
+						model.addAttribute("message",
+								"El ISBN " + ISBN + " no existe ");
+
+						return "dar-alta-titulo";
+					}
+					else {
+						tituloDAO.save(titulo);
+						log.info("SAVED: " +titulo);
+						model.addAttribute("message", "Se ha añadido el titulo "+titulo.getIsbn()+" con el autor "+titulo.getAutores());
+					}
+				}
+			}
+		}	
+		return "dar-alta-titulo";
 	}
 
 	/**

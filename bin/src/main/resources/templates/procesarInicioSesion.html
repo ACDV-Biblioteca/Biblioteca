@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Formulario de Inicio de Sesión</title>
+    <meta http-equiv="Content-Type" content="text/html; accept-charset=UTF-8" />
+    
+</head>
+<body>
+    <h2>Inicio de Sesión</h2>
+    <form action="#" th:action"@{/procesarInicioSesion}" th:object="${usuario}" method="post" >
+        <label for="idUsuario">ID de Usuario:</label>
+        <input type="number" th:field="*{id}"><br><br>
+        
+        <label for="contrasena">Contraseña:</label>
+        <input type="text" th:field="*{contraseña}"><br><br>
+        
+        <input type="submit" value="Iniciar Sesión">
+         <p class="message" th:if="${message}" th:text="${message}" id="message"></p>
+        
+    </form>
+</body>
+</html>
