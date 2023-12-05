@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org">
+<body>
+
+<h2>Ingresar nuevo titulo</h2>
+<div>
+    <form action="#" th:action="@{/dar-alta-titulo}" th:object="${Titulo}" method="post">
+     
+        <p>ISBN: <input type="number" th:field="*{isbn}" placeholder="ISBN del nuevo titulo"/><br><br>
+        <p>Titulo: <input type="text" th:field="*{nombre}" placeholder="Nombre del nuevo titulo"/><br><br>
+        <ul id="autoresList">
+        	<!-- Contenedor para los campos de autor -->
+        	<li th:each="autor, iterStat : ${Titulo.autores}">
+            	<input type="text" th:value="${autor.autor.nombre}" th:field="*{autores[__${iterStat.index}__].autor.nombre}" />
+				<input type="text" th:value="${autor.autor.apellidos}" th:field="*{autores[__${iterStat.index}__].autor.apellidos}" />
+        	</li>
+        </ul>
+        <!-- Botón para agregar más autores -->
+        <button type="button" onclick="agregarAutor()">Agregar Autor</button>
+        <input type="submit" value="Agregar"/>
+        <br><br><br><br>
+        <p class="message" th:if="${message}" th:text="${message}" id="message"></p>
+    
+    </form>
+    
+    <!-- Script para gestionar la adición dinámica de autores -->
+    <script>
+        let indiceAutor = 0;
+
+        function agregarAutor() {
+            const listaAutores = document.getElementById('autoresList');
+            const nuevoAutor = document.createElement('li');
+            nuevoAutor.innerHTML = `
+                <input type="text" name="autores[${indiceAutor}].autor.nombre" />
+                <input type="text" name="autores[${indiceAutor}].autor.apellidos" />
+                <button type="button" onclick="eliminarAutor(this)">Eliminar</button>
+                <br/>
+            `;
+            listaAutores.appendChild(nuevoAutor);
+            indiceAutor++;
+        }
+        function eliminarAutor(botonEliminar) {
+            const listaAutores = document.getElementById('autoresList');
+            listaAutores.removeChild(botonEliminar.parentElement);
+        }
+
+    </script>
+</div>
+
+</body>
+</html>

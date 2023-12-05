@@ -1,6 +1,7 @@
 package es.uclm.Biblioteca.domain.controllers;
 
 import es.uclm.Biblioteca.persistencia.*;
+import jakarta.persistence.EntityManager;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -39,15 +40,98 @@ public class GestorTitulos {
 	private ReservaDAO reservaDAO;
 	@Autowired
 	private AutorDAO autorDAO;
+	@Autowired
+	private EntityManager entityManager;
 
 	/**
 	 * @param titulo
 	 * @param isbn
 	 * @param autores
 	 */
-	public Titulo altaTitulo(String titulo, String isbn, String[] autores) {
-		// TODO - implement GestorTitulos.altaT�tulo
-		throw new UnsupportedOperationException();
+	@GetMapping("/dar-alta-titulo")
+	public String showAltaTitulo(Model model) {
+		model.addAttribute("Titulo", new Titulo());
+		model.addAttribute("tituloTitulo", new String());
+		model.addAttribute("message", ""); // Inicializa el mensaje como vacío
+		return "dar-alta-titulo";
+	}
+
+	@PostMapping("/dar-alta-titulo")
+	public String altaTitulo(@ModelAttribute Titulo titulo, Model model) {
+		model.addAttribute("Titulo", titulo);
+		model.addAttribute("tituloTitulo", new String(titulo.getNombre()));
+		model.addAttribute("message", ""); // Inicializa el mensaje como vacío
+		Titulo tituloNuevo = new Titulo();
+
+		if (titulo.getIsbn() == null) {
+			model.addAttribute("message", "Añade un ISBN");
+			return "dar-alta-titulo";
+
+		} else {
+			if (titulo.getNombre() == null || titulo.getNombre()=="") {
+				model.addAttribute("message", "Añade un Nombre");
+				return "dar-alta-titulo";
+			} else {
+				Long isbn = titulo.getIsbn();
+				Titulo t = tituloDAO.findById(isbn).orElse(null);
+				if (t != null) {
+					model.addAttribute("message", "El titulo con ISBN " + isbn + " ya existe");
+					entityManager.detach(t);
+
+					return "dar-alta-titulo";
+				} else {
+
+					if (titulo.getAutores().isEmpty() || titulo.getAutores().equals(null)) {
+						model.addAttribute("message", "Tienes que añadir al menos 1 autor");
+
+						return "dar-alta-titulo";
+
+					} else {
+
+						List<Autor> autoresExistentes = new ArrayList<>();
+						for (TituloAutor tituloAutor : titulo.getAutores()) {
+							String nombreAutor = tituloAutor.getAutor().getNombre();
+							String apellidoAutor = tituloAutor.getAutor().getApellidos();
+							Autor autorExistente = autorDAO.findByNombreApellidos(nombreAutor, apellidoAutor);
+
+							if (autorExistente == null) {
+								// El autor no existe
+								model.addAttribute("message", "El autor con nombre " + nombreAutor + " y apellido "
+										+ apellidoAutor + " no existe ");
+								return "dar-alta-titulo";
+							} else {
+								// El autor existe, añadirlo a la lista de autores existentes
+								autoresExistentes.add(autorExistente);
+							}
+						}
+						tituloNuevo.setIsbn(isbn);
+						tituloNuevo.setNombre(titulo.getNombre());
+						tituloNuevo.setNumReserva(0);
+						tituloNuevo.setAutores(null);
+						tituloNuevo.setEjemplares(null);
+						tituloNuevo.setPrestamos(null);
+						// ... (configurar otros atributos del título si es necesario)
+
+						// Guardar el nuevo título
+						Titulo tituloGuardado = tituloDAO.save(tituloNuevo);
+						log.info("Saved :" + tituloGuardado);
+
+						// Asociar autores existentes con el título guardado
+						for (Autor autorExistente : autoresExistentes) {
+							TituloAutor tituloAutor = new TituloAutor();
+							tituloAutor.setAutor(autorExistente);
+							tituloAutor.setTitulo(tituloGuardado);
+							tituloAutorDAO.save(tituloAutor);
+							log.info("Titulo Autor Saved:" + tituloAutor);
+						}
+
+						model.addAttribute("message", "Se ha añadido el titulo correctamente");
+
+					}
+				}
+			}
+		}
+		return "dar-alta-titulo";
 	}
 
 	/**

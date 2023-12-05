@@ -22,8 +22,6 @@ public class Titulo {
 	@Id
 	private Long isbn;
 
-	
-
 	@Column(name="nombre")
 	private String nombre;
 
