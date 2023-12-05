@@ -1,6 +1,7 @@
 package es.uclm.Biblioteca.domain.controllers;
 
 import es.uclm.Biblioteca.persistencia.*;
+import jakarta.persistence.EntityManager;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -39,6 +40,8 @@ public class GestorTitulos {
 	private ReservaDAO reservaDAO;
 	@Autowired
 	private AutorDAO autorDAO;
+	@Autowired
+	private EntityManager entityManager;
 
 	/**
 	 * @param titulo
@@ -58,55 +61,76 @@ public class GestorTitulos {
 		model.addAttribute("Titulo", titulo);
 		model.addAttribute("tituloTitulo", new String(titulo.getNombre()));
 		model.addAttribute("message", ""); // Inicializa el mensaje como vacío
-		
-		Long isbn = titulo.getIsbn();
-		List<Autor> autores = autorDAO.findAutoresByIsbn(isbn);
-		
-		for (Autor autor : autores) {
-			log.info(" autor1 " + autor.toString());
-		}
-		//Comprobamos si ha añadido algun autor
-		if (titulo.getAutores().isEmpty() || titulo.getAutores().equals(null)) {
-			model.addAttribute("message", "Tienes que añadir al menos 1 autor");
-			
+		Titulo tituloNuevo = new Titulo();
+
+		if (titulo.getIsbn() == null) {
+			model.addAttribute("message", "Añade un ISBN");
 			return "dar-alta-titulo";
-		}//Comprobamos si ha añadido un Isbn	
-		else if (titulo.getIsbn()>= 0) {
-			model.addAttribute("message", "Tienes que añadir un Isbn");
-			
-			return "dar-alta-titulo";	
-		}
-		else {
-			for (TituloAutor tituloautor : titulo.getAutores()) {
-				
-				String nombreAutor = tituloautor.getAutor().getNombre();
-				String apellidoAutor = tituloautor.getAutor().getApellidos();
-				Long ISBN = tituloautor.getTitulo().getIsbn();
-				// Verificar si existe el primer nombre y primer apellido
-				Autor autor = autorDAO.findByNombreApellidos(nombreAutor, apellidoAutor);
-				Titulo t = tituloDAO.findByIsbn(ISBN);
-				if (autor == null) {
-					model.addAttribute("message",
-							"El autor con nombre " + nombreAutor + " y apellido " + apellidoAutor + " no existe ");
+
+		} else {
+			if (titulo.getNombre() == null || titulo.getNombre()=="") {
+				model.addAttribute("message", "Añade un Nombre");
+				return "dar-alta-titulo";
+			} else {
+				Long isbn = titulo.getIsbn();
+				Titulo t = tituloDAO.findById(isbn).orElse(null);
+				if (t != null) {
+					model.addAttribute("message", "El titulo con ISBN " + isbn + " ya existe");
+					entityManager.detach(t);
 
 					return "dar-alta-titulo";
-				}
-				//Si que existe el autor
-				else {
-					if(t == null) {
-						model.addAttribute("message",
-								"El ISBN " + ISBN + " no existe ");
+				} else {
+
+					if (titulo.getAutores().isEmpty() || titulo.getAutores().equals(null)) {
+						model.addAttribute("message", "Tienes que añadir al menos 1 autor");
 
 						return "dar-alta-titulo";
-					}
-					else {
-						tituloDAO.save(titulo);
-						log.info("SAVED: " +titulo);
-						model.addAttribute("message", "Se ha añadido el titulo "+titulo.getIsbn()+" con el autor "+titulo.getAutores());
+
+					} else {
+
+						List<Autor> autoresExistentes = new ArrayList<>();
+						for (TituloAutor tituloAutor : titulo.getAutores()) {
+							String nombreAutor = tituloAutor.getAutor().getNombre();
+							String apellidoAutor = tituloAutor.getAutor().getApellidos();
+							Autor autorExistente = autorDAO.findByNombreApellidos(nombreAutor, apellidoAutor);
+
+							if (autorExistente == null) {
+								// El autor no existe
+								model.addAttribute("message", "El autor con nombre " + nombreAutor + " y apellido "
+										+ apellidoAutor + " no existe ");
+								return "dar-alta-titulo";
+							} else {
+								// El autor existe, añadirlo a la lista de autores existentes
+								autoresExistentes.add(autorExistente);
+							}
+						}
+						tituloNuevo.setIsbn(isbn);
+						tituloNuevo.setNombre(titulo.getNombre());
+						tituloNuevo.setNumReserva(0);
+						tituloNuevo.setAutores(null);
+						tituloNuevo.setEjemplares(null);
+						tituloNuevo.setPrestamos(null);
+						// ... (configurar otros atributos del título si es necesario)
+
+						// Guardar el nuevo título
+						Titulo tituloGuardado = tituloDAO.save(tituloNuevo);
+						log.info("Saved :" + tituloGuardado);
+
+						// Asociar autores existentes con el título guardado
+						for (Autor autorExistente : autoresExistentes) {
+							TituloAutor tituloAutor = new TituloAutor();
+							tituloAutor.setAutor(autorExistente);
+							tituloAutor.setTitulo(tituloGuardado);
+							tituloAutorDAO.save(tituloAutor);
+							log.info("Titulo Autor Saved:" + tituloAutor);
+						}
+
+						model.addAttribute("message", "Se ha añadido el titulo correctamente");
+
 					}
 				}
 			}
-		}	
+		}
 		return "dar-alta-titulo";
 	}
 

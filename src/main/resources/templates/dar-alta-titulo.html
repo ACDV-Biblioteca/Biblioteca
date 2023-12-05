@@ -6,7 +6,8 @@
 <div>
     <form action="#" th:action="@{/dar-alta-titulo}" th:object="${Titulo}" method="post">
      
-        <p>Título: <input type="number" th:field="*{isbn}" placeholder="ISBN del nuevo titulo"/>
+        <p>ISBN: <input type="number" th:field="*{isbn}" placeholder="ISBN del nuevo titulo"/><br><br>
+        <p>Titulo: <input type="text" th:field="*{nombre}" placeholder="Nombre del nuevo titulo"/><br><br>
         <ul id="autoresList">
         	<!-- Contenedor para los campos de autor -->
         	<li th:each="autor, iterStat : ${Titulo.autores}">
@@ -37,6 +38,10 @@
             `;
             listaAutores.appendChild(nuevoAutor);
             indiceAutor++;
+        }
+        function eliminarAutor(botonEliminar) {
+            const listaAutores = document.getElementById('autoresList');
+            listaAutores.removeChild(botonEliminar.parentElement);
         }
 
     </script>
