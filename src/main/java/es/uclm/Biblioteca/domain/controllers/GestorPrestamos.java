@@ -41,6 +41,93 @@ public class GestorPrestamos {
 
 	GestorPenalizaciones gestor = new GestorPenalizaciones();
 
+	@GetMapping("/PrestarEjemplarUsuario")
+	public String showPrestarEjemplarPageUsuario(HttpSession session, Model model) {
+		model.addAttribute("prestamo", new Prestamo());
+		Usuario usuario = (Usuario) session.getAttribute("usuario");
+
+		if (usuario != null) {
+			model.addAttribute("usuario", usuario);
+
+		}
+		List<Ejemplar> listaEjemplares = ejemplarDAO.findByNoPrestados();// Obtener la lista de ejemplares desde tu
+																			// repositorio o
+		// servicio
+		model.addAttribute("ejemplares", listaEjemplares);
+		model.addAttribute("message", "");
+		return "PrestarEjemplarUsuario";
+	}
+
+	// Método para procesar la solicitud de préstamo de ejemplar
+	@PostMapping("/PrestarEjemplarUsuario")
+	public String prestarEjemplarUsuario(@ModelAttribute Prestamo prestamo,
+			@RequestParam(value = "ejemplarId", required = false) Integer ejemplarId, Model model,
+			HttpSession session) {
+		model.addAttribute("prestamo", prestamo);
+		Usuario usuario = (Usuario) session.getAttribute("usuario");
+
+		if (usuario != null) {
+			model.addAttribute("usuario", usuario);
+
+		}
+		List<Ejemplar> ejemplares = ejemplarDAO.findByNoPrestados();
+
+		
+		  if (ejemplarId == null) {
+			model.addAttribute("message", "Debes seleccionar un ejemplar.");
+
+			model.addAttribute("ejemplares", ejemplares);
+
+			return "PrestarEjemplarUsuario";
+		} else {
+
+
+
+			int idEjemplarSeleccionado = ejemplarId;
+			Ejemplar ejemplar = ejemplarDAO.findById(idEjemplarSeleccionado).orElse(null);
+			if (ejemplar == null) {
+				model.addAttribute("ejemplares", ejemplares);
+				model.addAttribute("message", "El ejemplar con ID " + idEjemplarSeleccionado + " no existe");
+				return "PrestarEjemplarUsuario";
+			}
+			model.addAttribute("ejemplares", ejemplares);
+
+			model.addAttribute("message",
+					"Ejemplar " + idEjemplarSeleccionado + " seleccionado por el usuario " + usuario.getNombre());
+
+			LocalDate fechahoy = LocalDate.now();
+
+			Date fechaHoy = Date.from(fechahoy.atStartOfDay(ZoneId.systemDefault()).toInstant());
+
+			if (prestamoDAO.findCountPrestamosUsuario(usuario.getId()) > 10) {
+				model.addAttribute("message", "El usuario tiene el cupo de libros completo.");
+
+			} else if (gestor.comprobarPenalizacion(usuario, usuarioDAO, fechaHoy)) {
+				model.addAttribute("message", "El usuario tiene penalizaciones pendientes.");
+
+			} else {
+
+				LocalDate fechafutura = fechahoy.plusWeeks(2);
+
+				Date fechaFutura = Date.from(fechafutura.atStartOfDay(ZoneId.systemDefault()).toInstant());
+				prestamo.setActivo(true);
+				prestamo.setFechaFin(fechaFutura);
+				prestamo.setFechaInicio(fechaHoy);
+				prestamo.setEjemplar(ejemplar);
+				prestamo.setTitulo(ejemplar.getTitulo());
+				prestamo.setUsuario(usuario);
+				log.info("Se han eliminado  " + reservaDAO.deleteByEjemplar(ejemplar.getId())
+						+ " reservas con el ejemplar :" + ejemplar.getId());
+				log.info("Saved " + prestamoDAO.save(prestamo));
+
+				model.addAttribute("message", "Préstamo realizado con éxito.");
+
+			}
+		}
+
+		return "PrestarEjemplarUsuario";
+	}
+
 	/**
 	 * 
 	 * @param isbn
@@ -148,18 +235,11 @@ public class GestorPrestamos {
 			model.addAttribute("usuario", u);
 
 		}
+		model.addAttribute("prestamos", ejemplarDAO.findByPrestadosUsuario(u.getId()));// Obtener la lista de
+
 		return "DevolucionUsuario";
 	}
 
-	@GetMapping("/DevolucionEjemplar")
-	public String mostrarFormularioDevolucionBibliotecario(HttpSession session, Model model) {
-		Usuario u = (Usuario) session.getAttribute("usuario");
-		if (u != null) {
-			model.addAttribute("usuario", u);
-
-		}
-		return "DevolucionEjemplar";
-	}
 
 	@PostMapping("/DevolucionUsuario")
 	public String realizarDevolucionUsuario(@RequestParam(value = "ejemplarId", required = false) Integer ejemplarId,
@@ -218,63 +298,72 @@ public class GestorPrestamos {
 
 	}
 
+	@GetMapping("/DevolucionEjemplar")
+	public String mostrarFormularioDevolucionBibliotecario(Model model) {
+
+		model.addAttribute("prestamos", prestamoDAO.findAll());
+
+		return "DevolucionEjemplar";
+	}
+/*
 	@PostMapping("/DevolucionEjemplar")
 	public String realizarDevolucionBibliotecario(@RequestParam(value = "userId", required = false) String userId,
-			@RequestParam(value = "ejemplarId", required = false) Integer ejemplarId, Model model,
-			HttpSession session) {
-	/*	if (userId == null || userId.isEmpty()) {
+			@RequestParam(value = "prestamoEjemplarId", required = false) Integer prestamoEjemplarId, Model model) {
+		model.addAttribute("prestamos", prestamoDAO.findAll());
+
+		if (userId == null || userId.isEmpty()) {
 
 			model.addAttribute("message", "Por favor, introduce un ID de usuario válido");
 			return "PrestarEjemplar";
+		}else {
+			// ejemplares desde tu
+			// repositorio o
+			int idUsuario=Integer.valueOf(userId);
+			int idEjemplarSeleccionado = prestamoEjemplarId;
+			Prestamo pre= prestamoDAO.findByEjemplarId(idEjemplarSeleccionado).orElse(null);
+			Ejemplar ejemplar = ejemplarDAO.findById(idEjemplarSeleccionado).orElse(null);
+			if (ejemplar == null) {
+				// model.addAttribute("ejemplares", listaEjemplares);
+				model.addAttribute("message", "El ejemplar con ID " + idEjemplarSeleccionado + " no existe");
+				return "DevolucionEjemplar";
+			}
 
-		//List<Ejemplar> listaEjemplares = ejemplarDAO.findByPrestadosUsuario(usuario.getId());// Obtener la lista de
-																								// ejemplares desde tu
-																								// repositorio o
-		model.addAttribute("ejemplares", listaEjemplares);
-		int idEjemplarSeleccionado = ejemplarId;
-		Ejemplar ejemplar = ejemplarDAO.findById(idEjemplarSeleccionado).orElse(null);
-		if (ejemplar == null) {
-			//model.addAttribute("ejemplares", listaEjemplares);
-			model.addAttribute("message", "El ejemplar con ID " + idEjemplarSeleccionado + " no existe");
-			return "DevolucionEjemplar";
-		}
+			Prestamo prestamo = prestamoDAO.findByPrestamoId(ejemplar.getId(), usuario.getId(),
+					ejemplar.getTitulo().getIsbn());
+			if (prestamo != null) {
+				LocalDate fechahoy = LocalDate.now();
+				Date fechaHoy = Date.from(fechahoy.atStartOfDay(ZoneId.systemDefault()).toInstant());
 
-		Prestamo prestamo = prestamoDAO.findByPrestamoId(ejemplar.getId(), usuario.getId(),
-				ejemplar.getTitulo().getIsbn());
-		if (prestamo != null) {
-			LocalDate fechahoy = LocalDate.now();
-			Date fechaHoy = Date.from(fechahoy.atStartOfDay(ZoneId.systemDefault()).toInstant());
+				if (prestamo.getFechaFin().before(fechaHoy)) {
+					LocalDate fechafutura = fechahoy.plusWeeks(2);
+					Date fechaFutura = Date.from(fechafutura.atStartOfDay(ZoneId.systemDefault()).toInstant());
+					usuario.setFechaFinPenalizacion(fechaFutura);
+					if (gestor.aplicarPenalizacion(usuario, usuarioDAO) == 1) {
+						prestamoDAO.delete(prestamo);
+						log.info("Delete: " + prestamo);
 
-			if (prestamo.getFechaFin().before(fechaHoy)) {
-				LocalDate fechafutura = fechahoy.plusWeeks(2);
-				Date fechaFutura = Date.from(fechafutura.atStartOfDay(ZoneId.systemDefault()).toInstant());
-				usuario.setFechaFinPenalizacion(fechaFutura);
-				if (gestor.aplicarPenalizacion(usuario, usuarioDAO) == 1) {
-					prestamoDAO.delete(prestamo);
-					log.info("Delete: " + prestamo);
+						model.addAttribute("message",
+								"Devolución realizada con éxito con Penalizacion hasta " + fechaFutura.toString());
 
-					model.addAttribute("message",
-							"Devolución realizada con éxito con Penalizacion hasta " + fechaFutura.toString());
+					} else {
+						model.addAttribute("message", "Ha ocurrido un problema al aplicar la penalizacion");
+
+					}
 
 				} else {
-					model.addAttribute("message", "Ha ocurrido un problema al aplicar la penalizacion");
+					prestamoDAO.delete(prestamo);
+					log.info("Delete: " + prestamo);
+					model.addAttribute("message", "Devolución realizada con éxito");
 
 				}
-
-			} else {
-				prestamoDAO.delete(prestamo);
-				log.info("Delete: " + prestamo);
-				model.addAttribute("message", "Devolución realizada con éxito");
+				model.addAttribute("message", "Ha ocurrido un problema al crear el prestamo");
 
 			}
-			model.addAttribute("message", "Ha ocurrido un problema al crear el prestamo");
-
 		}
-		*/
 		return "DevolucionEjemplar";
 
 	}
-
+*/
 	@GetMapping("/ReservaEjemplar")
 	public String mostrarListaYFormulario(Model model) {
 		List<Ejemplar> listaEjemplares = ejemplarDAO.findByPrestados();// Obtener la lista de ejemplares desde tu
@@ -345,5 +434,70 @@ public class GestorPrestamos {
 		}
 		return "ReservaEjemplar";
 	}
+@GetMapping("/ReservaEjemplarUsuario")
+	public String mostrarListaYFormularioUsuario(HttpSession session, Model model) {
+		List<Ejemplar> listaEjemplares = ejemplarDAO.findByPrestados();// Obtener la lista de ejemplares desde tu
+														// repositorio o
+		// servicio
+		Usuario usuario = (Usuario) session.getAttribute("usuario");
 
+		if (usuario != null) {
+			model.addAttribute("usuario", usuario);
+		}
+		model.addAttribute("ejemplares", listaEjemplares);
+		model.addAttribute("reserva", new Reserva());
+
+		// Formulario para la acción que realizarás
+		return "ReservaEjemplarUsuario"; // Devuelve el nombre de la vista Thymeleaf
+	}
+
+	@PostMapping("/ReservaEjemplarUsuario")
+	public String procesarEjemplarUsuario(@ModelAttribute Reserva reserva,
+			@RequestParam(value = "userId", required = false) String userId,
+			@RequestParam(value = "ejemplarId", required = false) Integer ejemplarId, Model model,HttpSession session) {
+		model.addAttribute("reserva", reserva);
+		List<Ejemplar> listaEjemplares = ejemplarDAO.findByPrestados();// Obtener la lista de ejemplares desde tu
+		Usuario usuario = (Usuario) session.getAttribute("usuario");
+
+		if (usuario != null) {
+			model.addAttribute("usuario", usuario);
+		}// repositorio o
+
+		 if (ejemplarId == null) {
+			model.addAttribute("mensaje", "Debes seleccionar un ejemplar.");
+
+			model.addAttribute("ejemplares", listaEjemplares);
+
+			return "ReservaEjemplarUsuario";
+		} else {
+
+
+			
+
+			int idEjemplarSeleccionado = ejemplarId;
+			Ejemplar ejemplar = ejemplarDAO.findById(idEjemplarSeleccionado).orElse(null);
+			if (ejemplar == null) {
+				model.addAttribute("ejemplares", listaEjemplares);
+				model.addAttribute("mensaje", "El ejemplar con ID " + idEjemplarSeleccionado + " no existe");
+				return "ReservaEjemplarUsuario";
+			}
+			model.addAttribute("mensaje",
+					"Ejemplar " + idEjemplarSeleccionado + " seleccionado por el usuario " + usuario.getNombre());
+
+			model.addAttribute("ejemplares", listaEjemplares);
+			model.addAttribute("userId", usuario.getId());
+			LocalDate fechahoy = LocalDate.now();
+
+			Date fechaHoy = Date.from(fechahoy.atStartOfDay(ZoneId.systemDefault()).toInstant());
+			reserva.setUsuario(usuario);
+			reserva.setEjemplar(ejemplar);
+			reserva.setFecha(fechaHoy);
+
+			log.info("Saved " + reservaDAO.save(reserva));
+
+			model.addAttribute("message", "Préstamo realizado con éxito.");
+
+		}
+		return "ReservaEjemplarUsuario";
+	}
 }
