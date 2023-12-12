@@ -64,4 +64,9 @@ public class GestorLogin {
 		return "PanelAdministrador"; // Nombre del archivo HTML
 	}
 
+	@GetMapping("/Bibliotecario")
+	public String mostrarFormularioABibliotecario() {
+		return "Bibliotecario"; // Nombre del archivo HTML
+	}
+
 }

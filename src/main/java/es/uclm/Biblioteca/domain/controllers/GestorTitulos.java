@@ -58,13 +58,12 @@ public class GestorTitulos {
 
     @PostMapping("/DeleteAndUpdate")
     public String borrarTitulo(@ModelAttribute Titulo titulo, Model model) {
-        //  implementar para borrar el libro de la base de datos
         model.addAttribute("titulo", titulo);
         Titulo t = tituloDAO.getById(titulo.getIsbn());
         log.info("DELETE:" + t);
 
         tituloDAO.delete(t);
-        model.addAttribute("message", "Se ha borrado el titulo ");
+        model.addAttribute("message", "Se ha borrado el titulo " + t.getTitulo() + " con ISBN " + t.getIsbn());
         return "DeleteAndUpdate";
     }
 
@@ -89,6 +88,7 @@ public class GestorTitulos {
         	ejemplar.setId((int)ejemplarDAO.count()+1);
         	ejemplarDAO.save(ejemplar);
         	log.info("Saved: " + ejemplar);
+        	model.addAttribute("message", "Se ha añadido exitosamente el ejemplar con el titulo: "+ ejemplar.getTitulo()); // Inicializa el mensaje como vací
         }else {
         	
               model.addAttribute("message", "No existe ese Titulo para añadir el ejemplar"); // Inicializa el mensaje como vací
