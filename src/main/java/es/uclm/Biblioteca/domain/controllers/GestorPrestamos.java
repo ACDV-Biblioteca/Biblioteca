@@ -307,26 +307,36 @@ public class GestorPrestamos {
 
 	@GetMapping("/DevolucionEjemplar")
 	public String mostrarFormularioDevolucionBibliotecario(Model model) {
-
-		model.addAttribute("prestamos", prestamoDAO.findAll());
+		model.addAttribute("prestamos", prestamoDAO.findByPrestados());
 
 		return "DevolucionEjemplar";
 	}
-/*
+
 	@PostMapping("/DevolucionEjemplar")
 	public String realizarDevolucionBibliotecario(@RequestParam(value = "userId", required = false) String userId,
 			@RequestParam(value = "prestamoEjemplarId", required = false) Integer prestamoEjemplarId, Model model) {
-		model.addAttribute("prestamos", prestamoDAO.findAll());
+		model.addAttribute("prestamos", prestamoDAO.findByPrestados());
 
 		if (userId == null || userId.isEmpty()) {
 
 			model.addAttribute("message", "Por favor, introduce un ID de usuario válido");
-			return "PrestarEjemplar";
+			return "DevolucionEjemplar";
 		}else {
 			// ejemplares desde tu
 			// repositorio o
 			int idUsuario=Integer.valueOf(userId);
-			int idEjemplarSeleccionado = prestamoEjemplarId;
+			Usuario usuario = usuarioDAO.findById(idUsuario).orElse(null);
+			if (usuario == null) {
+				model.addAttribute("usuario", usuario);
+				model.addAttribute("message", "No existe dicho usuario");
+				return "DevolucionEjemplar";
+			}else {
+				model.addAttribute("usuario", usuario);
+				model.addAttribute("message", "Registrado "+usuario);
+				return "DevolucionEjemplar";
+			}
+		}
+		/*	int idEjemplarSeleccionado = prestamoEjemplarId;
 			Prestamo pre= prestamoDAO.findByEjemplarId(idEjemplarSeleccionado).orElse(null);
 			Ejemplar ejemplar = ejemplarDAO.findById(idEjemplarSeleccionado).orElse(null);
 			if (ejemplar == null) {
@@ -366,11 +376,10 @@ public class GestorPrestamos {
 				model.addAttribute("message", "Ha ocurrido un problema al crear el prestamo");
 
 			}
-		}
-		return "DevolucionEjemplar";
+		}*/
 
 	}
-*/
+
 	@GetMapping("/ReservaEjemplar")
 	public String mostrarListaYFormulario(Model model) {
 		List<Ejemplar> listaEjemplares = ejemplarDAO.findByPrestados();// Obtener la lista de ejemplares desde tu

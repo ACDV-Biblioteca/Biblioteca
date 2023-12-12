@@ -25,6 +25,9 @@ public interface PrestamoDAO extends JpaRepository<Prestamo, PrestamoId>{
     @Transactional
 	public int deleteByISBN(Long titulo_isbn);
     
+    @Query(value="Select * from Prestamo where activo=true",nativeQuery=true)
+    public List<Prestamo> findByPrestados();
+    
 	
 	
 	

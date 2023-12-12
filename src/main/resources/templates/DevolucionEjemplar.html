@@ -12,12 +12,14 @@
         <ul>
             <li th:each="prestamo : ${prestamos}">
                 <label th:for="${'prestamo_' + prestamo.ejemplar.id}">
-                    <input type="radio" th:id="${'prestamo_' + `prestamo.ejemplar.id}" th:name="prestamoEjemplarId" th:value="${prestamo.ejemplar.id}" />
-                    <span th:text="${prestamo.ejemplar.id + ' - ' + prestamo.ejemplar.id}" />
+                    <input type="radio" th:id="${'prestamo_' + prestamo.ejemplar.titulo.nombre + ' - '+ prestamo.ejemplar.id}" th:name="prestamoEjemplarId" th:value="${prestamo.ejemplar.titulo.nombre}" />
+                    <span th:text="${prestamo.ejemplar.id + ' - ' + prestamo.ejemplar.titulo.nombre}" />
                 </label>
             </li>
         </ul>
         <input type="submit" value="Realizar Devolución">
+        <a href="/Bibliotecario">Atras</a>  
+        
          <p class="message" th:if="${message}" th:text="${message}" id="message"></p>
         
     </form>
