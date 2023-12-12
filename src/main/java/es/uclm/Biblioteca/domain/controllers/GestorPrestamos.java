@@ -45,32 +45,41 @@ public class GestorPrestamos {
 	public String showPrestarEjemplarPageUsuario(HttpSession session, Model model) {
 		model.addAttribute("prestamo", new Prestamo());
 		Usuario usuario = (Usuario) session.getAttribute("usuario");
+		List<Ejemplar> listaEjemplares = ejemplarDAO.findByNoPrestados();// Obtener la lista de ejemplares desde tu
 
 		if (usuario != null) {
 			model.addAttribute("usuario", usuario);
-
+		
+			model.addAttribute("ejemplares", listaEjemplares);
+			model.addAttribute("message", "");
+			return "PrestarEjemplarUsuario";
+		}else {
+			model.addAttribute("usuario", usuario);
+			
+			model.addAttribute("ejemplares", listaEjemplares);
+			model.addAttribute("message", "No eciste dicho usuario");
+			return "PrestarEjemplarUsuario";
 		}
-		List<Ejemplar> listaEjemplares = ejemplarDAO.findByNoPrestados();// Obtener la lista de ejemplares desde tu
-																			// repositorio o
-		// servicio
-		model.addAttribute("ejemplares", listaEjemplares);
-		model.addAttribute("message", "");
-		return "PrestarEjemplarUsuario";
+		
 	}
 
-	// Método para procesar la solicitud de préstamo de ejemplar
 	@PostMapping("/PrestarEjemplarUsuario")
 	public String prestarEjemplarUsuario(@ModelAttribute Prestamo prestamo,
 			@RequestParam(value = "ejemplarId", required = false) Integer ejemplarId, Model model,
 			HttpSession session) {
 		model.addAttribute("prestamo", prestamo);
 		Usuario usuario = (Usuario) session.getAttribute("usuario");
+		List<Ejemplar> ejemplares = ejemplarDAO.findByNoPrestados();
 
-		if (usuario != null) {
-			model.addAttribute("usuario", usuario);
+		if (usuario == null) {
+			model.addAttribute("message", "No existe dicho usuario");
+			model.addAttribute("ejemplares", ejemplares);
+			return "PrestarEjemplarUsuario";
 
 		}
-		List<Ejemplar> ejemplares = ejemplarDAO.findByNoPrestados();
+		model.addAttribute("usuario", usuario);
+		model.addAttribute("message", "");
+		model.addAttribute("ejemplares", ejemplares);
 
 		
 		  if (ejemplarId == null) {
@@ -128,18 +137,11 @@ public class GestorPrestamos {
 		return "PrestarEjemplarUsuario";
 	}
 
-	/**
-	 * 
-	 * @param isbn
-	 * @param idEjemplar
-	 * @param idUsuario
-	 */
+	
 	@GetMapping("/PrestarEjemplar")
 	public String showPrestarEjemplarPage(Model model) {
 		model.addAttribute("prestamo", new Prestamo());
 		List<Ejemplar> listaEjemplares = ejemplarDAO.findByNoPrestados();// Obtener la lista de ejemplares desde tu
-																			// repositorio o
-		// servicio
 		model.addAttribute("ejemplares", listaEjemplares);
 		model.addAttribute("message", "");
 		return "PrestarEjemplar";
@@ -222,22 +224,26 @@ public class GestorPrestamos {
 		return "PrestarEjemplar";
 	}
 
-	/**
-	 * 
-	 * @param isbn
-	 * @param idEjemplar
-	 * @param idUsuario
-	 */
+	
 	@GetMapping("/DevolucionUsuario")
 	public String mostrarFormularioDevolucionUsuario(HttpSession session, Model model) {
 		Usuario u = (Usuario) session.getAttribute("usuario");
-		if (u != null) {
+		if (u == null) {
 			model.addAttribute("usuario", u);
+			model.addAttribute("message", "No existe dicho usuario");
+			return "DevolucionUsuario";
+
+
+		}else {
+		model.addAttribute("usuario", u);
+		List<Ejemplar> prestamos=ejemplarDAO.findByPrestadosUsuario(u.getId());
+		model.addAttribute("prestamos", prestamos);// Obtener la lista de
+		if(prestamos.isEmpty()) {
+			model.addAttribute("message", "Este usuario no dispone de ningun prestamo realizado");
 
 		}
-		model.addAttribute("prestamos", ejemplarDAO.findByPrestadosUsuario(u.getId()));// Obtener la lista de
-
 		return "DevolucionUsuario";
+		}
 	}
 
 
@@ -246,9 +252,10 @@ public class GestorPrestamos {
 			Model model, HttpSession session) {
 		Usuario usuario = (Usuario) session.getAttribute("usuario");
 
-		if (usuario != null) {
+		if (usuario == null) {
 			model.addAttribute("usuario", usuario);
-
+			model.addAttribute("message", "No existe dicho usuario");
+			return "DevolucionUsuario";
 		}
 
 		List<Ejemplar> listaEjemplares = ejemplarDAO.findByPrestadosUsuario(usuario.getId());// Obtener la lista de
@@ -407,7 +414,7 @@ public class GestorPrestamos {
 				model.addAttribute("mensaje", "El usuario con ID " + idUsuario + " no existe");
 				return "ReservaEjemplar";
 			}
-
+			
 			int idEjemplarSeleccionado = ejemplarId;
 			Ejemplar ejemplar = ejemplarDAO.findById(idEjemplarSeleccionado).orElse(null);
 			if (ejemplar == null) {
@@ -434,7 +441,7 @@ public class GestorPrestamos {
 		}
 		return "ReservaEjemplar";
 	}
-@GetMapping("/ReservaEjemplarUsuario")
+	@GetMapping("/ReservarEjemplarUsuario")
 	public String mostrarListaYFormularioUsuario(HttpSession session, Model model) {
 		List<Ejemplar> listaEjemplares = ejemplarDAO.findByPrestados();// Obtener la lista de ejemplares desde tu
 														// repositorio o
@@ -443,15 +450,24 @@ public class GestorPrestamos {
 
 		if (usuario != null) {
 			model.addAttribute("usuario", usuario);
-		}
-		model.addAttribute("ejemplares", listaEjemplares);
-		model.addAttribute("reserva", new Reserva());
+			model.addAttribute("ejemplares", listaEjemplares);
+			model.addAttribute("mensaje","");
+			model.addAttribute("reserva", new Reserva());
+			return"ReservarEjemplarUsuario";
 
-		// Formulario para la acción que realizarás
-		return "ReservaEjemplarUsuario"; // Devuelve el nombre de la vista Thymeleaf
+		}else {
+			model.addAttribute("usuario", usuario);
+			model.addAttribute("ejemplares", listaEjemplares);
+			model.addAttribute("reserva", new Reserva());
+			model.addAttribute("mensaje","No hay ningun usuario registrado");
+
+			return"ReservarEjemplarUsuario";
+		}
+		
+		
 	}
 
-	@PostMapping("/ReservaEjemplarUsuario")
+	@PostMapping("/ReservarEjemplarUsuario")
 	public String procesarEjemplarUsuario(@ModelAttribute Reserva reserva,
 			@RequestParam(value = "userId", required = false) String userId,
 			@RequestParam(value = "ejemplarId", required = false) Integer ejemplarId, Model model,HttpSession session) {
@@ -468,7 +484,7 @@ public class GestorPrestamos {
 
 			model.addAttribute("ejemplares", listaEjemplares);
 
-			return "ReservaEjemplarUsuario";
+			return "ReservarEjemplarUsuario";
 		} else {
 
 
@@ -498,6 +514,6 @@ public class GestorPrestamos {
 			model.addAttribute("message", "Préstamo realizado con éxito.");
 
 		}
-		return "ReservaEjemplarUsuario";
+		return "ReservarEjemplarUsuario";
 	}
 }

@@ -5,7 +5,7 @@
 </head>
 <body>
     <h1>Lista de Ejemplares Disponibles</h1>
-    <form action="/ReservaEjemplarUsuario" " method="post"> 
+    <form action="/ReservarEjemplarUsuario" th:object="${reserva}" method="post"> 
     		
        <p th:text="'Bienvenido: ' + ${session.usuario.nombre}"/>
     

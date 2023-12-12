@@ -30,7 +30,7 @@ public class GestorLogin {
 	}
 
 	@GetMapping("/procesarInicioSesion")
-	public String LoginUsuario(Model model) {
+	public String LoginUsuario(Model model,HttpSession session) {
 		model.addAttribute("usuario", new Usuario());
 		model.addAttribute("message", ""); // Inicializa el mensaje como vacío
 
@@ -40,23 +40,32 @@ public class GestorLogin {
 	@PostMapping("/procesarInicioSesion")
 	public String PostLoginUsuario(@ModelAttribute Usuario usuario, Model model,HttpSession session) {
 		model.addAttribute("usuario", usuario);
+		if (usuario == null) {
+	        model.addAttribute("message", "Introduzca un usuario");
+	        return "procesarInicioSesion";
+	    } else if (usuario.getId() < 0 || String.valueOf(usuario.getId()).isEmpty()) {
+	        model.addAttribute("message", "Introduzca un id para usuario");
+	        return "procesarInicioSesion";
+		}else {
+
 		Optional<Usuario> u = usuariorDAO.findById(usuario.getId());
 
 		if (u.isPresent()) {
 			if ((u.get().getContraseña()).equals(usuario.getContraseña())) {
-				usuario.setNombre(u.get().getNombre());
-				session.setAttribute("usuario", u.get());
+				session.setAttribute("usuario", (Usuario) u.get());
 				return "PanelUsuario";
 			} else {
 				model.addAttribute("message", "La contraseña no es la misma"); // Inicializa el mensaje como vacío
+				return "procesarInicioSesion"; // Nombre del archivo HTML
 
 			}
 		} else {
 			model.addAttribute("message", "No existe ningun Usuario con ese id"); // Inicializa el mensaje como vacío
+			return "procesarInicioSesion"; // Nombre del archivo HTML
 
 		}
 
-		return "procesarInicioSesion"; // Nombre del archivo HTML
+	}
 	}
 	
 	@GetMapping("/PanelAdministrador")
