@@ -1,6 +1,6 @@
 ----------------------------------------------------------------
-Wed Dec 13 09:31:46 CET 2023:
-Booting Derby version The Apache Software Foundation - Apache Derby - 10.16.1.1 - (1901046): instance a816c00e-018c-624d-a6d6-0000014197b8 
+Wed Dec 13 10:54:57 CET 2023:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.16.1.1 - (1901046): instance a816c00e-018c-6299-d050-000002034468 
 on database directory C:\Users\Victo\git\Biblioteca2\database with class loader jdk.internal.loader.ClassLoaders$AppClassLoader@73d16e93 
 Loaded from file:/C:/Users/Victo/.m2/repository/org/apache/derby/derby/10.16.1.1/derby-10.16.1.1.jar
 java.vendor=Oracle Corporation

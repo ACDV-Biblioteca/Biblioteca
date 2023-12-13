@@ -109,7 +109,7 @@ public class GestorPrestamos {
 				model.addAttribute("message", "El usuario tiene el cupo de libros completo.");
 
 			} else if (gestor.comprobarPenalizacion(usuario, usuarioDAO, fechaHoy)) {
-				model.addAttribute("message", "El usuario tiene penalizaciones pendientes.");
+				model.addAttribute("message", "El usuario tiene penalizaciones pendientes hasta "+ usuario.getFechaFinPenalizacion());
 
 			} else {
 
@@ -195,7 +195,7 @@ public class GestorPrestamos {
 				model.addAttribute("message", "El usuario tiene el cupo de libros completo.");
 
 			} else if (gestor.comprobarPenalizacion(usuario, usuarioDAO, fechaHoy)) {
-				model.addAttribute("message", "El usuario tiene penalizaciones pendientes.");
+				model.addAttribute("message", "El usuario tiene penalizaciones pendientes hasta "+ usuario.getFechaFinPenalizacion());
 
 			} else {
 
@@ -291,7 +291,6 @@ public class GestorPrestamos {
 				model.addAttribute("message", "Devolución realizada con éxito");
 
 			}
-			model.addAttribute("message", "Ha ocurrido un problema al crear el prestamo");
 
 		}
 		return "DevolucionUsuario";
@@ -342,7 +341,7 @@ public class GestorPrestamos {
 				model.addAttribute("message", "Devolución realizada con éxito");
 
 			}
-			model.addAttribute("message", "Ha ocurrido un problema al crear el prestamo");
+			
 		}
 		return "DevolucionEjemplar";
 

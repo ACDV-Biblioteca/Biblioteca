@@ -10,7 +10,7 @@
         <ul>
             <li th:each="prestamo : ${prestamos}">
                 <label th:for="${'prestamo_' + prestamo.ejemplar.id}">
-                    <input type="radio" th:id="${'prestamo_' + prestamo.ejemplar.titulo.nombre + ' - '+ prestamo.usuario.nombre + '-' +prestamo.usuario.id}" th:name="prestamoEjemplarId" th:value="${prestamo.ejemplar.titulo.nombre}" />
+                    <input type="radio" th:id="${'prestamo_' + prestamo.ejemplar.titulo.nombre + ' - '+ prestamo.usuario.nombre + '-' +prestamo.usuario.id}" th:name="prestamoEjemplarId" th:value="${prestamo.ejemplar.id}" />
                     <span th:text="${prestamo.ejemplar.id + ' - ' + prestamo.ejemplar.titulo.nombre + ' - '+ prestamo.usuario.nombre + ' con id :' +prestamo.usuario.id}" />
                 </label>
             </li>

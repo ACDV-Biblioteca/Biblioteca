@@ -12,7 +12,7 @@
   <ul>
             <li th:each="prestamo : ${prestamos}">
                 <label th:for="${'prestamo_' + prestamo.titulo.nombre}">
-                    <input type="radio" th:id="${'prestamo_' + titulo.isbn}" th:name="tituloIsbn" th:value="${prestamo.titulo.isbn}" />
+                    <input type="radio" th:id="${'prestamo_' + prestamo.titulo.isbn}" th:name="tituloIsbn" th:value="${prestamo.titulo.isbn}" />
                     <span th:text="${prestamo.titulo.isbn + ' - ' + prestamo.titulo.nombre}" />
                 </label>
             </li>

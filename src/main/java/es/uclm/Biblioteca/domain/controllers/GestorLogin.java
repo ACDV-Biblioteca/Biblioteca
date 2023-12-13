@@ -88,5 +88,11 @@ public class GestorLogin {
 	public String mostrarFormularioABibliotecario() {
 		return "Bibliotecario"; // Nombre del archivo HTML
 	}
+	@GetMapping("/PanelUsuario")
+	public String mostrarFormularioAUsuario(Model model,HttpSession session) {
+		Usuario usuario = (Usuario) session.getAttribute("usuario");
+		model.addAttribute("usuario", usuario);
+		return "PanelUsuario"; // Nombre del archivo HTML
+	}
 
 }
