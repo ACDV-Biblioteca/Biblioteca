@@ -68,7 +68,7 @@ public class GestorTitulos {
 			return "dar-alta-titulo";
 
 		} else {
-			if (titulo.getNombre() == null || titulo.getNombre()=="") {
+			if (titulo.getNombre() == null || titulo.getNombre().equals("")) {
 				model.addAttribute("message", "Añade un Nombre");
 				return "dar-alta-titulo";
 			} else {
@@ -81,7 +81,7 @@ public class GestorTitulos {
 					return "dar-alta-titulo";
 				} else {
 
-					if (titulo.getAutores().isEmpty() || titulo.getAutores().equals(null)) {
+					if (titulo.getAutores().isEmpty() || titulo.getAutores()==null) {
 						model.addAttribute("message", "Tienes que añadir al menos 1 autor");
 
 						return "dar-alta-titulo";
@@ -196,7 +196,7 @@ public class GestorTitulos {
 			return "actualizar-titulo";
 		} else {
 
-			if (titulo.getAutores().equals(null) || titulo.getAutores().isEmpty()) {
+			if (titulo.getAutores()==null || titulo.getAutores().isEmpty()) {
 				model.addAttribute("message", "Tienes que añadir al menos 1 autor");
 				return "actualizar-titulo";
 			} else {

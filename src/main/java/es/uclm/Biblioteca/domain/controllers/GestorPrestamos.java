@@ -453,9 +453,11 @@ public class GestorPrestamos {
 		List<Ejemplar> listaEjemplares = ejemplarDAO.findByPrestados();// Obtener la lista de ejemplares desde tu
 		Usuario usuario = (Usuario) session.getAttribute("usuario");
 
-		if (usuario != null) {
+		if (usuario == null) {
 			model.addAttribute("usuario", usuario);
-		} // repositorio o
+			model.addAttribute("mensaje", "El usuario no existe.");
+
+		} else{// repositorio o
 
 		if (ejemplarId == null) {
 			model.addAttribute("mensaje", "Debes seleccionar un ejemplar.");
@@ -489,6 +491,9 @@ public class GestorPrestamos {
 			model.addAttribute("message", "Préstamo realizado con éxito.");
 
 		}
-		return "ReservarEjemplarUsuario";
 	}
+		return "ReservarEjemplarUsuario";
+
+	}
+	
 }
