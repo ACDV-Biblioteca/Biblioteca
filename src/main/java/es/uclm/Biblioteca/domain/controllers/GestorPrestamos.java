@@ -62,7 +62,7 @@ public class GestorPrestamos {
 		}
 
 	}
-
+//commit prueba carlos.
 	@PostMapping("/PrestarEjemplarUsuario")
 	public String prestarEjemplarUsuario(@ModelAttribute Prestamo prestamo,
 			@RequestParam(value = "ejemplarId", required = false) Integer ejemplarId, Model model,
