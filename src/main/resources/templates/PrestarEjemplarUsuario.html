@@ -20,11 +20,10 @@
 </head>
 <body>
 
-<h2>Prestar Ejemplar</h2>
+<h2>Prestar Ejemplar </h2>
 <div>
-    <form action="#" th:action="@{/PrestarEjemplar}" th:object="${prestamo}" method="post">
-        <label for="usuarioId">ID del Usuario:</label>
-        <input type="number" name="userId" th:value="${userId}" placeholder="ID del Usuario" required />
+    <form action="#" th:action="@{/PrestarEjemplarUsuario}" th:object="${prestamo}" method="post">
+       <p th:text="'Bienvenido: ' + ${session.usuario.nombre}"/>
         <br/>
         <ul>
             <li th:each="ejemplar : ${ejemplares}">
@@ -35,7 +34,7 @@
             </li>
         </ul>
         <input type="submit" value="Prestar" />
-                 <a href="/Bibliotecario">Atras</a>  
+        <a href="/PanelUsuario">Atras</a>  
         
         <p class="message" th:if="${message}" th:text="${message}" id="message"></p>
     </form>

@@ -9,13 +9,15 @@
     <h2>Inicio de Sesión</h2>
     <form action="#" th:action"@{/procesarInicioSesion}" th:object="${usuario}" method="post" >
         <label for="idUsuario">ID de Usuario:</label>
-        <input type="number" th:field="*{id}"><br><br>
+        <input type="text" name="UserId" th:value="${UserId}"><br><br>
         
         <label for="contrasena">Contraseña:</label>
         <input type="text" th:field="*{contraseña}"><br><br>
         
         <input type="submit" value="Iniciar Sesión">
          <p class="message" th:if="${message}" th:text="${message}" id="message"></p>
+         
+        <a href="/pagina-de-inicio">Atras</a>  
         
     </form>
 </body>

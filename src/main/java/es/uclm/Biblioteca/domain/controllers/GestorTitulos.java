@@ -68,7 +68,7 @@ public class GestorTitulos {
 			return "dar-alta-titulo";
 
 		} else {
-			if (titulo.getNombre() == null || titulo.getNombre()=="") {
+			if (titulo.getNombre() == null || titulo.getNombre().equals("")) {
 				model.addAttribute("message", "Añade un Nombre");
 				return "dar-alta-titulo";
 			} else {
@@ -81,7 +81,7 @@ public class GestorTitulos {
 					return "dar-alta-titulo";
 				} else {
 
-					if (titulo.getAutores().isEmpty() || titulo.getAutores().equals(null)) {
+					if (titulo.getAutores().isEmpty() || titulo.getAutores()==null) {
 						model.addAttribute("message", "Tienes que añadir al menos 1 autor");
 
 						return "dar-alta-titulo";
@@ -196,7 +196,7 @@ public class GestorTitulos {
 			return "actualizar-titulo";
 		} else {
 
-			if (titulo.getAutores().equals(null) || titulo.getAutores().isEmpty()) {
+			if (titulo.getAutores()==null || titulo.getAutores().isEmpty()) {
 				model.addAttribute("message", "Tienes que añadir al menos 1 autor");
 				return "actualizar-titulo";
 			} else {
@@ -276,16 +276,20 @@ public class GestorTitulos {
 	 */
 	@GetMapping("/AñadirEjemplar")
 	public String showAñadirEjemplarPage(Model model) {
-		model.addAttribute("titulo", new Titulo());
+		model.addAttribute("titulos",tituloDAO.findAll());
+		model.addAttribute("titulo",new Titulo());
+
 		model.addAttribute("message", ""); // Inicializa el mensaje como vacío
 
 		return "AñadirEjemplar";
 	}
 
 	@PostMapping("/AñadirEjemplar")
-	public String altaEjemplar(@ModelAttribute Titulo titulo, Model model) {
+	public String altaEjemplar(@ModelAttribute Titulo titulo, Model model,@RequestParam(value = "tituloIsbn", required = false) Long tituloIsbn) {
 		model.addAttribute("titulo", titulo);
-		Titulo t = tituloDAO.getById(titulo.getIsbn());
+		model.addAttribute("titulos",tituloDAO.findAll());
+
+		Titulo t = tituloDAO.getById(tituloIsbn);
 		if (t != null) {
 			Ejemplar ejemplar = new Ejemplar();
 			ejemplar.setTitulo(t);
@@ -309,30 +313,41 @@ public class GestorTitulos {
 	 */
 	@GetMapping("/BorrarEjemplar")
 	public String showBorrarEjemplarPage(Model model) {
-		model.addAttribute("ejemplar", new Ejemplar());
+		model.addAttribute("titulos",tituloDAO.findAll());
+		model.addAttribute("ejemplar", new Ejemplar()); // Inicializa el mensaje como vacío
+
 		model.addAttribute("message", ""); // Inicializa el mensaje como vacío
 
 		return "BorrarEjemplar";
 	}
 
 	@PostMapping("/BorrarEjemplar")
-	public String bajaEjemplar(@ModelAttribute Ejemplar ejemplar, Model model) {
-		model.addAttribute("ejemplar", ejemplar);
-		List<Ejemplar> ejemplarOpt2 = ejemplarDAO.findByIsbn(ejemplar.getTitulo().getIsbn());
+	public String bajaEjemplar(@ModelAttribute Ejemplar ejemplar, Model model,@RequestParam(value = "tituloIsbn", required = false) Long tituloIsbn) {
+		model.addAttribute("titulos",tituloDAO.findAll());
+		model.addAttribute("ejemplar",ejemplar); // Inicializa el mensaje como vacío
+
+		List<Ejemplar> ejemplarOpt2 = ejemplarDAO.findByIsbn(tituloIsbn);
+		
 
 		// Si el Ejemplar existe, eliminarlo
 		if (!ejemplarOpt2.isEmpty()) {
 			if (ejemplarOpt2.size() == 1) {
+				prestamoDAO.deleteByISBN(tituloIsbn);
+				reservaDAO.deleteByISBN(tituloIsbn);
 				ejemplarDAO.delete(ejemplarOpt2.get(ejemplarOpt2.size() - 1));
 
+				tituloAutorDAO.deleteByISBN(tituloIsbn);
+
+				prestamoDAO.deleteByISBN(tituloIsbn);
+				Titulo t = tituloDAO.getById(tituloIsbn);
+				tituloDAO.delete(t);
 				log.info("Se ha borrado el ejemplar " + ejemplarOpt2.get(ejemplarOpt2.size() - 1).getId()
-						+ " con titulo " + ejemplarOpt2.get(ejemplarOpt2.size() - 1).getTitulo().getNombre());
+						+ " junto titulo " + ejemplarOpt2.get(ejemplarOpt2.size() - 1).getTitulo().getNombre()+" ya que no se dispone de ningun ejemplar");
 				model.addAttribute("message",
 						"Se ha borrado el ejemplar " + ejemplarOpt2.get(ejemplarOpt2.size() - 1).getId()
-								+ " con titulo " + ejemplarOpt2.get(ejemplarOpt2.size() - 1).getTitulo().getNombre());
-				Titulo titulo = new Titulo();
-				titulo.setIsbn(ejemplar.getTitulo().getIsbn());
-
+								+ " junto titulo " + ejemplarOpt2.get(ejemplarOpt2.size() - 1).getTitulo().getNombre()+" ya que no se dispone de ningun ejemplar");
+			
+					
 			} else {
 				ejemplarDAO.delete(ejemplarOpt2.get(ejemplarOpt2.size() - 1));
 				model.addAttribute("message",

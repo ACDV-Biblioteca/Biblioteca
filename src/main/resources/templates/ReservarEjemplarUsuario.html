@@ -5,9 +5,9 @@
 </head>
 <body>
     <h1>Lista de Ejemplares Disponibles</h1>
-    <form action="/ReservaEjemplar" th:object="${reserva}" method="post"> 
-    		<label for="idUsuario">ID de Usuario:</label>
-            <input type="number" name="userId" th:value="${userId}" /> <!-- Campo oculto con el ID del usuario -->
+    <form action="/ReservarEjemplarUsuario" th:object="${reserva}" method="post"> 
+    		
+       <p th:text="'Bienvenido: ' + ${session.usuario.nombre}"/>
     
         <ul>
             <li th:each="ejemplar : ${ejemplares}">
@@ -18,7 +18,7 @@
             </li>
         </ul>
         <button type="submit">Seleccionar</button>
-                 <a href="/Bibliotecario">Atras</a>  
+                 <a href="/PanelUsuario">Atras</a>  
         
     </form>
     <div th:if="${mensaje}">
