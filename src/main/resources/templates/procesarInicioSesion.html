@@ -9,7 +9,7 @@
     <h2>Inicio de Sesión</h2>
     <form action="#" th:action"@{/procesarInicioSesion}" th:object="${usuario}" method="post" >
         <label for="idUsuario">ID de Usuario:</label>
-        <input type="number" th:field="*{id}"><br><br>
+        <input type="text" name="UserId" th:value="${UserId}"><br><br>
         
         <label for="contrasena">Contraseña:</label>
         <input type="text" th:field="*{contraseña}"><br><br>
