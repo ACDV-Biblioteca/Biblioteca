@@ -28,6 +28,8 @@ public interface PrestamoDAO extends JpaRepository<Prestamo, PrestamoId>{
     public Prestamo findByEjemplarId(int ejemplar);
     @Query(value="Select * from Prestamo where activo=true",nativeQuery=true)
     public List<Prestamo> findByPrestados();
+    @Query(value="Select * from Prestamo  WHERE usuario_id= :usuario AND activo = true",nativeQuery=true)
+    public List<Prestamo> findByUsuarioId(int usuario);
     
 	
 	

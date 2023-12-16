@@ -72,6 +72,12 @@ public class Usuario {
 	public void setPrestamos(List<Prestamo> prestamos) {
 		this.prestamos = prestamos;
 	}
+	public List<Reserva> getReservas() {
+		return reservas;
+	}
+	public void setReservas(List<Reserva> reservas) {
+		this.reservas = reservas;
+	}
 	public Usuario() {
 		super();
 	}
@@ -92,12 +98,7 @@ public class Usuario {
 				+ fecha_Fin_Penalizacion + ", contraseña=" + contraseña + ", prestamos=" + prestamos + ", reservas="
 				+ reservas + "]";
 	}
-	public List<Reserva> getReservas() {
-		return reservas;
-	}
-	public void setReservas(List<Reserva> reservas) {
-		this.reservas = reservas;
-	}
+	
 
 
 
