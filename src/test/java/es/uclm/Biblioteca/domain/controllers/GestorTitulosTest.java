@@ -1,56 +1,76 @@
 package es.uclm.Biblioteca.domain.controllers;
 
-import org.junit.Test;
-
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
+import es.uclm.Biblioteca.domain.entities.Titulo;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.ui.Model;
+
+import es.uclm.Biblioteca.domain.controllers.GestorTitulos;
+import es.uclm.Biblioteca.persistencia.EjemplarDAO;
+import es.uclm.Biblioteca.persistencia.PrestamoDAO;
+import es.uclm.Biblioteca.persistencia.ReservaDAO;
+import es.uclm.Biblioteca.persistencia.TituloAutorDAO;
+import es.uclm.Biblioteca.persistencia.TituloDAO;
+
+import java.util.Collections;
+import java.util.Optional;
+
+@RunWith(MockitoJUnitRunner.class)
 public class GestorTitulosTest {
 
-    @Test
-    public void showAltaTitulo() {
-    }
+    @InjectMocks
+    private GestorTitulos gestorTitulos;
 
-    @Test
-    public void altaTitulo() {
-    }
+    @Mock
+    private TituloDAO tituloDAO;
 
-    @Test
-    public void actualizarTitulo() {
-    }
+    @Mock
+    private PrestamoDAO prestamoDAO;
 
-    @Test
-    public void actualizarTituloPost() {
-    }
+    @Mock
+    private ReservaDAO reservaDAO;
 
-    @Test
-    public void actualizarTituloValores() {
-    }
+    @Mock
+    private EjemplarDAO ejemplarDAO;
 
-    @Test
-    public void actualizarTituloValoresPost() {
-    }
+    @Mock
+    private TituloAutorDAO tituloAutorDAO;
 
-    @Test
-    public void borrarTitulo() {
+    @Mock
+    private Model model;
+
+    @Before
+    public void setUp() {
+        // Setup any necessary mock objects or data before each test
     }
 
     @Test
     public void testBorrarTitulo() {
-    }
+        // Mock data
+        Long tituloIsbn = 9780312983286L;
 
-    @Test
-    public void showAñadirEjemplarPage() {
-    }
+        // Mock behavior
+        when(tituloDAO.findById(tituloIsbn)).thenReturn(Optional.of(new Titulo()));
+        when(tituloDAO.findAll()).thenReturn(Collections.emptyList());
 
-    @Test
-    public void altaEjemplar() {
-    }
+        // Call the method to test
+        String result = gestorTitulos.borrarTitulo(tituloIsbn, new Titulo(), model);
 
-    @Test
-    public void showBorrarEjemplarPage() {
-    }
+        // Assertions
+        assertEquals("DeleteAndUpdate", result);
+      /*  verify(prestamoDAO).deleteByISBN(tituloIsbn);
+        verify(reservaDAO).deleteByISBN(tituloIsbn);
+        verify(ejemplarDAO).deleteByISBN(tituloIsbn);
+        verify(tituloAutorDAO).deleteByISBN(tituloIsbn);
+        verify(prestamoDAO).deleteByISBN(tituloIsbn);*/
+        verify(tituloDAO).deleteById(tituloIsbn);
 
-    @Test
-    public void bajaEjemplar() {
     }
 }
