@@ -4,6 +4,7 @@ import java.util.Date;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.List;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -104,8 +105,16 @@ public class GestorPrestamos {
 	}
 
 	public void RealizarPrestamo(Prestamo prestamo, int usuarioId, Model model, Ejemplar ejemplar) {
+		
+			Optional<Usuario> u = usuarioDAO.findById(usuarioId);
+			if(!u.isPresent()) {
+				model.addAttribute("message", "No existe ningun usuario con ID " + usuarioId);
+				
+			}
+			
+		else {
+			Usuario usuario=u.get();
 
-		Usuario usuario = usuarioDAO.getById(usuarioId);
 		LocalDate fechahoy = LocalDate.now();
 
 		Date fechaHoy = Date.from(fechahoy.atStartOfDay(ZoneId.systemDefault()).toInstant());
@@ -136,7 +145,7 @@ public class GestorPrestamos {
 			model.addAttribute("message", "Préstamo realizado con éxito.");
 
 		}
-
+		}
 	}
 
 	@GetMapping("/PrestarEjemplar")

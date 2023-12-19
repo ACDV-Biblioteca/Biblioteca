@@ -23,7 +23,7 @@ public class GestorLogin {
 	private static final Logger log = LoggerFactory.getLogger(GestorTitulos.class);
 
 	@Autowired
-	UsuarioDAO usuariorDAO;
+	UsuarioDAO usuarioDAO;
 
 	@GetMapping("/pagina-de-inicio")
 	public String mostrarFormularioInicioSesion() {
@@ -59,7 +59,7 @@ public class GestorLogin {
 				model.addAttribute("message", "Introduzca un numero positivo en el id de usuario");
 		        return "procesarInicioSesion";
 			}
-		Optional<Usuario> u = usuariorDAO.findById(idUsuario);
+		Optional<Usuario> u = usuarioDAO.findById(idUsuario);
 
 		if (u.isPresent()) {
 			if ((u.get().getContraseña()).equals(usuario.getContraseña())) {
