@@ -119,7 +119,7 @@ public class GestorPrestamosTest {
 	}
 
 	@Test
-	private void testReservarEjemplar() {
+	public void testReservarEjemplar() {
 		// Configurar comportamiento del mock de UsuarioDAO
         when(usuarioDAO.getById(anyInt())).thenReturn(new Usuario());
 
@@ -129,6 +129,7 @@ public class GestorPrestamosTest {
         // Verificar el comportamiento esperado
         // Ajusta esto según cómo debería comportarse tu método
         verify(reservaDAO).save(any(Reserva.class));
+
 	}
 
 	@Test

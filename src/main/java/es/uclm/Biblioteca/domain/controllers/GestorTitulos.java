@@ -297,17 +297,17 @@ public class GestorTitulos {
 			ejemplar.setTitulo(t);
 			ejemplar.setId((int) ejemplarDAO.count() + 1);
 			ejemplarDAO.save(ejemplar);
-			log.info("Saved: " + ejemplar);
 			model.addAttribute("message",
 					"Se ha añadido exitosamente el ejemplar con el titulo: " + ejemplar.getTitulo()); // Inicializa el
 																										// mensaje como
-																										// vací
+			return "AñadirEjemplar";
+																					// vací
 		} else {
 
 			model.addAttribute("message", "No existe ese Titulo para añadir el ejemplar"); // Inicializa el mensaje como
-																							// vací
+			return "AñadirEjemplar";
+																			// vací
 		}
-		return "AñadirEjemplar";
 	}
 
 	/**

@@ -103,7 +103,7 @@ public class GestorPrestamos {
 		}
 	}
 
-	private void RealizarPrestamo(Prestamo prestamo, int usuarioId, Model model, Ejemplar ejemplar) {
+	void RealizarPrestamo(Prestamo prestamo, int usuarioId, Model model, Ejemplar ejemplar) {
 		Usuario usuario = usuarioDAO.getById(usuarioId);
 		LocalDate fechahoy = LocalDate.now();
 
@@ -304,7 +304,7 @@ public class GestorPrestamos {
 		return "ReservaEjemplar"; // Devuelve el nombre de la vista Thymeleaf
 	}
 
-	private void ReservarEjemplar(Reserva reserva, int userId, Ejemplar ejemplar, Model model) {
+	public void ReservarEjemplar(Reserva reserva, int userId, Ejemplar ejemplar, Model model) {
 		Usuario usuario = usuarioDAO.getById(userId);
 		LocalDate fechahoy = LocalDate.now();
 
@@ -312,7 +312,7 @@ public class GestorPrestamos {
 		reserva.setUsuario(usuario);
 		reserva.setEjemplar(ejemplar);
 		reserva.setFecha(fechaHoy);
-
+		reservaDAO.save(reserva);
 
 		model.addAttribute("mensaje", "Reserva realizada con éxito.");
 
