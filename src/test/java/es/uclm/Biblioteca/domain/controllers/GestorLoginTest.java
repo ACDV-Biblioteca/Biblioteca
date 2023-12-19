@@ -10,6 +10,7 @@ import es.uclm.Biblioteca.persistencia.UsuarioDAO;
 import jakarta.servlet.http.HttpSession;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.MockitoAnnotations;
 import org.springframework.ui.Model;
 
 import java.util.Optional;
@@ -22,6 +23,8 @@ public class GestorLoginTest {
 
     @Before
     public void setUp() {
+		MockitoAnnotations.initMocks(this); // Inicializar los mocks antes de cada prueba
+
         gestorLogin = new GestorLogin();
         usuarioDAO = mock(UsuarioDAO.class);
         session = mock(HttpSession.class);

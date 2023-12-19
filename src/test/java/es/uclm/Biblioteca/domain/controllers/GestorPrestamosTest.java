@@ -88,6 +88,8 @@ public class GestorPrestamosTest {
 
     @Before
     public void setUp() {
+		MockitoAnnotations.initMocks(this); // Inicializar los mocks antes de cada prueba
+
         model = mock(Model.class);
     }
 
