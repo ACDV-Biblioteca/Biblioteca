@@ -29,7 +29,7 @@ public class GestorLoginTest {
         usuarioDAO = mock(UsuarioDAO.class);
         session = mock(HttpSession.class);
 
-        gestorLogin.usuariorDAO = usuarioDAO;
+        gestorLogin.usuarioDAO = usuarioDAO;
     }
 
     @Test
