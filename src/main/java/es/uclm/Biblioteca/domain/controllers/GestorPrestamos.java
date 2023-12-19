@@ -103,7 +103,7 @@ public class GestorPrestamos {
 		}
 	}
 
-	private void RealizarPrestamo(Prestamo prestamo, int usuarioId, Model model, Ejemplar ejemplar) {
+	public void RealizarPrestamo(Prestamo prestamo, int usuarioId, Model model, Ejemplar ejemplar) {
 		Usuario usuario = usuarioDAO.getById(usuarioId);
 		LocalDate fechahoy = LocalDate.now();
 
