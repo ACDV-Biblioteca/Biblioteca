@@ -81,7 +81,7 @@ public class GestorTitulos {
 					return "dar-alta-titulo";
 				} else {
 
-					if (titulo.getAutores().isEmpty() || titulo.getAutores()==null) {
+					if (titulo.getAutores().isEmpty() || titulo.getAutores() == null) {
 						model.addAttribute("message", "Tienes que añadir al menos 1 autor");
 
 						return "dar-alta-titulo";
@@ -168,7 +168,6 @@ public class GestorTitulos {
 
 			return "actualizar-titulo";
 		}
-		// return "ActualizarTitulo";
 	}
 
 	@GetMapping("/actualizar-titulo")
@@ -196,7 +195,7 @@ public class GestorTitulos {
 			return "actualizar-titulo";
 		} else {
 
-			if (titulo.getAutores()==null || titulo.getAutores().isEmpty()) {
+			if (titulo.getAutores() == null || titulo.getAutores().isEmpty()) {
 				model.addAttribute("message", "Tienes que añadir al menos 1 autor");
 				return "actualizar-titulo";
 			} else {
@@ -227,7 +226,9 @@ public class GestorTitulos {
 				}
 				t.setAutores(autores);
 				tituloDAO.save(t);
-				log.info("Saved : +" + t);
+				model.addAttribute("message",
+						"El titulo se ha actualizado con exito");
+
 			}
 
 		}
@@ -276,8 +277,8 @@ public class GestorTitulos {
 	 */
 	@GetMapping("/AñadirEjemplar")
 	public String showAñadirEjemplarPage(Model model) {
-		model.addAttribute("titulos",tituloDAO.findAll());
-		model.addAttribute("titulo",new Titulo());
+		model.addAttribute("titulos", tituloDAO.findAll());
+		model.addAttribute("titulo", new Titulo());
 
 		model.addAttribute("message", ""); // Inicializa el mensaje como vacío
 
@@ -285,9 +286,10 @@ public class GestorTitulos {
 	}
 
 	@PostMapping("/AñadirEjemplar")
-	public String altaEjemplar(@ModelAttribute Titulo titulo, Model model,@RequestParam(value = "tituloIsbn", required = false) Long tituloIsbn) {
+	public String altaEjemplar(@ModelAttribute Titulo titulo, Model model,
+			@RequestParam(value = "tituloIsbn", required = false) Long tituloIsbn) {
 		model.addAttribute("titulo", titulo);
-		model.addAttribute("titulos",tituloDAO.findAll());
+		model.addAttribute("titulos", tituloDAO.findAll());
 
 		Titulo t = tituloDAO.getById(tituloIsbn);
 		if (t != null) {
@@ -295,17 +297,17 @@ public class GestorTitulos {
 			ejemplar.setTitulo(t);
 			ejemplar.setId((int) ejemplarDAO.count() + 1);
 			ejemplarDAO.save(ejemplar);
-			log.info("Saved: " + ejemplar);
 			model.addAttribute("message",
 					"Se ha añadido exitosamente el ejemplar con el titulo: " + ejemplar.getTitulo()); // Inicializa el
 																										// mensaje como
-																										// vací
+			return "AñadirEjemplar";
+																					// vací
 		} else {
 
 			model.addAttribute("message", "No existe ese Titulo para añadir el ejemplar"); // Inicializa el mensaje como
-																							// vací
+			return "AñadirEjemplar";
+																			// vací
 		}
-		return "AñadirEjemplar";
 	}
 
 	/**
@@ -313,7 +315,7 @@ public class GestorTitulos {
 	 */
 	@GetMapping("/BorrarEjemplar")
 	public String showBorrarEjemplarPage(Model model) {
-		model.addAttribute("titulos",tituloDAO.findAll());
+		model.addAttribute("titulos", tituloDAO.findAll());
 		model.addAttribute("ejemplar", new Ejemplar()); // Inicializa el mensaje como vacío
 
 		model.addAttribute("message", ""); // Inicializa el mensaje como vacío
@@ -322,16 +324,20 @@ public class GestorTitulos {
 	}
 
 	@PostMapping("/BorrarEjemplar")
-	public String bajaEjemplar(@ModelAttribute Ejemplar ejemplar, Model model,@RequestParam(value = "tituloIsbn", required = false) Long tituloIsbn) {
-		model.addAttribute("titulos",tituloDAO.findAll());
-		model.addAttribute("ejemplar",ejemplar); // Inicializa el mensaje como vacío
+	public String bajaEjemplar(@ModelAttribute Ejemplar ejemplar, Model model,
+			@RequestParam(value = "tituloIsbn", required = false) Long tituloIsbn) {
+		model.addAttribute("titulos", tituloDAO.findAll());
+		model.addAttribute("ejemplar", ejemplar); // Inicializa el mensaje como vacío
 
 		List<Ejemplar> ejemplarOpt2 = ejemplarDAO.findByIsbn(tituloIsbn);
-		
 
 		// Si el Ejemplar existe, eliminarlo
-		if (!ejemplarOpt2.isEmpty()) {
+		if (ejemplarOpt2.isEmpty()) {
+			model.addAttribute("message", "No se encontró el ejemplar con ese ISBN.");
+			return "BorrarEjemplar";
+		} else {
 			if (ejemplarOpt2.size() == 1) {
+
 				prestamoDAO.deleteByISBN(tituloIsbn);
 				reservaDAO.deleteByISBN(tituloIsbn);
 				ejemplarDAO.delete(ejemplarOpt2.get(ejemplarOpt2.size() - 1));
@@ -341,33 +347,20 @@ public class GestorTitulos {
 				prestamoDAO.deleteByISBN(tituloIsbn);
 				Titulo t = tituloDAO.getById(tituloIsbn);
 				tituloDAO.delete(t);
-				log.info("Se ha borrado el ejemplar " + ejemplarOpt2.get(ejemplarOpt2.size() - 1).getId()
-						+ " junto titulo " + ejemplarOpt2.get(ejemplarOpt2.size() - 1).getTitulo().getNombre()+" ya que no se dispone de ningun ejemplar");
 				model.addAttribute("message",
-						"Se ha borrado el ejemplar " + ejemplarOpt2.get(ejemplarOpt2.size() - 1).getId()
-								+ " junto titulo " + ejemplarOpt2.get(ejemplarOpt2.size() - 1).getTitulo().getNombre()+" ya que no se dispone de ningun ejemplar");
-			
-					
+						"Se ha borrado el ejemplar " + ejemplarOpt2.get(ejemplarOpt2.size() - 1).getId());
+				return "BorrarEjemplar";
+
 			} else {
 				ejemplarDAO.delete(ejemplarOpt2.get(ejemplarOpt2.size() - 1));
 				model.addAttribute("message",
-						"Se ha borrado el ejemplar " + ejemplarOpt2.get(ejemplarOpt2.size() - 1).getId()
-								+ " con titulo " + ejemplarOpt2.get(ejemplarOpt2.size() - 1).getTitulo().getNombre());
-
-				log.info("Se ha borrado el ejemplar " + ejemplarOpt2.get(ejemplarOpt2.size() - 1).getId()
-						+ " con titulo " + ejemplarOpt2.get(ejemplarOpt2.size() - 1).getTitulo().getNombre());
+						"Se ha borrado el ejemplar " + ejemplarOpt2.get(ejemplarOpt2.size() - 1).getId());
+				return "BorrarEjemplar";
 
 			}
 
-		} else {
-			// Manejar el caso en el que el Ejemplar no se encuentra
-
-			model.addAttribute("message", "No se encontró el ejemplar con ese ISBN.");
-			log.info("Este ejemplar no existe");
-
 		}
-
-		return "BorrarEjemplar";
+		// Manejar el caso en el que el Ejemplar no se encuentra
 	}
 
 }

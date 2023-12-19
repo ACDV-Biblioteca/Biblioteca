@@ -104,6 +104,7 @@ public class GestorPrestamos {
 	}
 
 	public void RealizarPrestamo(Prestamo prestamo, int usuarioId, Model model, Ejemplar ejemplar) {
+
 		Usuario usuario = usuarioDAO.getById(usuarioId);
 		LocalDate fechahoy = LocalDate.now();
 
@@ -220,7 +221,6 @@ public class GestorPrestamos {
 			usuario.setFechaFinPenalizacion(fechaFutura);
 			if (gestor.aplicarPenalizacion(usuario, usuarioDAO) == 1) {
 				prestamoDAO.delete(prestamo);
-				log.info("Delete: " + prestamo);
 
 				model.addAttribute("message",
 						"Devolución realizada con éxito con Penalizacion hasta " + fechaFutura.toString());
@@ -232,7 +232,6 @@ public class GestorPrestamos {
 
 		} else {
 			prestamoDAO.delete(prestamo);
-			log.info("Delete: " + prestamo);
 			model.addAttribute("message", "Devolución realizada con éxito");
 
 		}
@@ -306,7 +305,7 @@ public class GestorPrestamos {
 		return "ReservaEjemplar"; // Devuelve el nombre de la vista Thymeleaf
 	}
 
-	private void ReservarEjemplar(Reserva reserva, int userId, Ejemplar ejemplar, Model model) {
+	public void ReservarEjemplar(Reserva reserva, int userId, Ejemplar ejemplar, Model model) {
 		Usuario usuario = usuarioDAO.getById(userId);
 		LocalDate fechahoy = LocalDate.now();
 
@@ -314,8 +313,7 @@ public class GestorPrestamos {
 		reserva.setUsuario(usuario);
 		reserva.setEjemplar(ejemplar);
 		reserva.setFecha(fechaHoy);
-
-		log.info("Saved " + reservaDAO.save(reserva));
+		reservaDAO.save(reserva);
 
 		model.addAttribute("mensaje", "Reserva realizada con éxito.");
 
@@ -409,6 +407,7 @@ public class GestorPrestamos {
 		if (usuario == null) {
 			model.addAttribute("usuario", usuario);
 			model.addAttribute("mensaje", "El usuario no existe.");
+			return "ReservarEjemplarUsuario";
 
 		} else {// repositorio o
 
@@ -419,25 +418,24 @@ public class GestorPrestamos {
 
 				return "ReservarEjemplarUsuario";
 			} else {
-
 				int idEjemplarSeleccionado = ejemplarId;
 				Ejemplar ejemplar = ejemplarDAO.findById(idEjemplarSeleccionado).orElse(null);
 				if (ejemplar == null) {
 					model.addAttribute("ejemplares", listaEjemplares);
 					model.addAttribute("mensaje", "El ejemplar con ID " + idEjemplarSeleccionado + " no existe");
-					return "ReservaEjemplarUsuario";
-				}
+					return "ReservarEjemplarUsuario";
+				}else {
 				model.addAttribute("mensaje",
 						"Ejemplar " + idEjemplarSeleccionado + " seleccionado por el usuario " + usuario.getNombre());
 
 				model.addAttribute("ejemplares", listaEjemplares);
 				model.addAttribute("userId", usuario.getId());
-				ReservarEjemplar(reserva, usuario.getId(), ejemplar, model);
-
+				ReservarEjemplar(reserva, usuario.getId(), ejemplar, model); // Se llama a ReservarEjemplar
+				return "ReservarEjemplarUsuario";
 			}
-		}
-		return "ReservarEjemplarUsuario";
+			}
 
+		}
 	}
 
 }
