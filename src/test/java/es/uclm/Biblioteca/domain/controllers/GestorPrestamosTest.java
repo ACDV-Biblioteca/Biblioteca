@@ -78,9 +78,7 @@ public class GestorPrestamosTest {
     private ReservaDAO reservaDAO;
      @Mock
     private HttpSession session;
-    @InjectMocks
-    private GestorPrestamos gestorPrestamos;
-
+    
     private Model model;
   @Mock
     private TituloAutorDAO tituloAutorDAO;
@@ -93,6 +91,7 @@ public class GestorPrestamosTest {
         model = mock(Model.class);
     }
 
+    
     @Test
     public void testRealizarPrestamo_Success() {
         // Mock data
@@ -126,7 +125,7 @@ public class GestorPrestamosTest {
     }
 
 
-}
+
 
 
 	@Test
@@ -144,7 +143,7 @@ public class GestorPrestamosTest {
     
 	}
 @Test
-	private void testRealizarPrestamo() {
+	public void testRealizarPrestamo() {
 		 // Configurar comportamiento del mock de UsuarioDAO
         when(usuarioDAO.getById(anyInt())).thenReturn(new Usuario());
 

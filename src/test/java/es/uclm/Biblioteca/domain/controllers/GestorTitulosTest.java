@@ -65,6 +65,7 @@ public class GestorTitulosTest {
 
 	@Mock
 	private TituloAutorDAO tituloAutorDAO;
+	private Model model;
 
 	@InjectMocks
 	private GestorTitulos gestorTitulos;

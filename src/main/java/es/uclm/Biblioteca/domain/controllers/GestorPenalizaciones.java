@@ -35,6 +35,7 @@ public class GestorPenalizaciones {
 		boolean resultado=true;
 		Date fecha_penalizacion= null;
 		
+		
 		fecha_penalizacion=usuarioDAO.comprobarPenalizacion(u.getId());
 		if(fecha_penalizacion == null || fecha_penalizacion.before(fechaHoy)) {
 
