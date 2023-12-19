@@ -60,7 +60,9 @@ public class GestorPrestamos {
 			model.addAttribute("ejemplares", ejemplares);
 			return "PrestarEjemplarUsuario";
 
-		}
+		}else {
+			
+		
 		model.addAttribute("usuario", usuario);
 		model.addAttribute("message", "");
 		model.addAttribute("ejemplares", ejemplares);
@@ -81,6 +83,7 @@ public class GestorPrestamos {
 				return "PrestarEjemplarUsuario";
 			}
 			RealizarPrestamo(prestamo, usuario.getId(), model, ejemplar);
+		}
 		}
 		return "PrestarEjemplarUsuario";
 	}
