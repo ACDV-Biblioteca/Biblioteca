@@ -14,7 +14,6 @@ import es.uclm.Biblioteca.domain.entities.TituloAutor;
 import es.uclm.Biblioteca.persistencia.*;
 
 
-
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.contains;
@@ -49,8 +48,18 @@ public class GestorTitulosTest {
 
     @InjectMocks
     private GestorTitulos gestorTitulos;
-    
+
+        
     private Model model;
+
+	@Before
+    public void setup() {
+        MockitoAnnotations.initMocks(this); // Inicializar los mocks antes de cada prueba
+        model = mock(Model.class);
+
+    }
+    
+
 
 
 	@Before
@@ -91,8 +100,35 @@ public class GestorTitulosTest {
 	    tituloExistente.setNombre("Nombre Original");
 	    tituloExistente.setNumReserva(5);
 
+
+    @Test
+    public void altaEjemplar() {
+    	 // Configurar comportamiento del mock de TituloDAO
+        Long tituloIsbnExistente = 9780312983286L; // ISBN de ejemplo que existe
+        Titulo tituloExistente = new Titulo(); // Ajusta esto según tu implementación real
+        when(tituloDAO.getById(tituloIsbnExistente)).thenReturn(tituloExistente);
+
+        // Llamar al método bajo prueba
+        String resultadoExistente = gestorTitulos.altaEjemplar(new Titulo(), mock(Model.class), tituloIsbnExistente);
+
+        // Verificar que se recibe el mensaje correcto y que se llamó al save de ejemplarDAO
+        verify(ejemplarDAO).save(any(Ejemplar.class));
+        assertEquals("AñadirEjemplar", resultadoExistente);
+
+        // Configurar comportamiento del mock de TituloDAO para un título inexistente
+        Long tituloIsbnNoExistente = 97803129832L; // ISBN de ejemplo que no existe
+        when(tituloDAO.getById(tituloIsbnNoExistente)).thenReturn(null);
+
+        // Llamar al método bajo prueba
+        String resultadoNoExistente = gestorTitulos.altaEjemplar(new Titulo(), mock(Model.class), tituloIsbnNoExistente);
+
+        // Verificar que se recibe el mensaje correcto y que no se llamó al save de ejemplarDAO
+        verify(ejemplarDAO, never()).save(any(Ejemplar.class));
+        assertEquals("AñadirEjemplar", resultadoNoExistente);
+    }
 	    // Simular comportamiento del tituloDAO
 	    when(tituloDAO.getById(isbnExistente)).thenReturn(tituloExistente);
+
 
 	    // Simular un autor existente
 	    Autor autorExistente = new Autor();

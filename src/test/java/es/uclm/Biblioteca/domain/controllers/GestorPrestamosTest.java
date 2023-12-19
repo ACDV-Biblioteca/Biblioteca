@@ -22,15 +22,20 @@ import es.uclm.Biblioteca.persistencia.UsuarioDAO;
 import jakarta.servlet.http.HttpSession;
 
 import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
+import java.util.Collections;
+
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -48,8 +53,7 @@ public class GestorPrestamosTest {
     private UsuarioDAO usuarioDAO;
     @Mock
     private PrestamoDAO prestamoDAO;
-
-    @Mock
+  @Mock
     private ReservaDAO reservaDAO;
 
     @Mock
@@ -67,6 +71,64 @@ public class GestorPrestamosTest {
         MockitoAnnotations.initMocks(this); // Inicializar los mocks antes de cada prueba
         model = mock(Model.class);
 
+	}
+
+
+	@Test
+	public void testPrestarEjemplar() {
+		// Configurar comportamiento del mock de EjemplarDAO
+        when(ejemplarDAO.findByNoPrestados()).thenReturn(Collections.emptyList());
+
+        // Llamar al método bajo prueba
+        String resultado = gestorPrestamos.prestarEjemplar(new Prestamo(), "1", 1, mock(Model.class));
+
+        // Verificar el comportamiento esperado
+        // Ajusta esto según cómo debería comportarse tu método
+        verify(prestamoDAO, never()).save(any(Prestamo.class));
+        assertEquals("PrestarEjemplar", resultado);
+    
+	}
+	private void testRealizarPrestamo() {
+		 // Configurar comportamiento del mock de UsuarioDAO
+        when(usuarioDAO.getById(anyInt())).thenReturn(new Usuario());
+
+        // Configurar comportamiento del mock de ReservaDAO
+        when(reservaDAO.deleteByEjemplar(anyInt())).thenReturn(0);
+
+        // Llamar al método bajo prueba
+        gestorPrestamos.RealizarPrestamo(new Prestamo(), 1, mock(Model.class), new Ejemplar());
+
+        // Verificar el comportamiento esperado
+        // Ajusta esto según cómo debería comportarse tu método
+        verify(prestamoDAO).save(any(Prestamo.class));
+	}
+
+
+	@Test
+	public void testProcesarEjemplar() {
+		// Configurar comportamiento del mock de EjemplarDAO
+        when(ejemplarDAO.findByPrestados()).thenReturn(Collections.emptyList());
+
+        // Llamar al método bajo prueba
+        String resultado = gestorPrestamos.procesarEjemplar(new Reserva(), "1", 1, mock(Model.class));
+
+        // Verificar el comportamiento esperado
+        // Ajusta esto según cómo debería comportarse tu método
+        verify(reservaDAO, never()).save(any(Reserva.class));
+        assertEquals("ReservaEjemplar", resultado);
+	}
+
+	@Test
+	private void testReservarEjemplar() {
+		// Configurar comportamiento del mock de UsuarioDAO
+        when(usuarioDAO.getById(anyInt())).thenReturn(new Usuario());
+
+        // Llamar al método bajo prueba
+        gestorPrestamos.ReservarEjemplar(new Reserva(), 1, new Ejemplar(), mock(Model.class));
+
+        // Verificar el comportamiento esperado
+        // Ajusta esto según cómo debería comportarse tu método
+        verify(reservaDAO).save(any(Reserva.class));
 	}
 
 	@Test
