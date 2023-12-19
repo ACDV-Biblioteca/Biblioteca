@@ -30,11 +30,13 @@
             <li th:each="ejemplar : ${ejemplares}">
                 <label th:for="${'ejemplar_' + ejemplar.id}">
                     <input type="radio" th:id="${'ejemplar_' + ejemplar.id}" th:name="ejemplarId" th:value="${ejemplar.id}" />
-                    <span th:text="${ejemplar.id + ' - ' + ejemplar.titulo.titulo}" />
+                    <span th:text="${ejemplar.id + ' - ' + ejemplar.titulo.nombre}" />
                 </label>
             </li>
         </ul>
         <input type="submit" value="Prestar" />
+                 <a href="/Bibliotecario">Atras</a>  
+        
         <p class="message" th:if="${message}" th:text="${message}" id="message"></p>
     </form>
 </div>

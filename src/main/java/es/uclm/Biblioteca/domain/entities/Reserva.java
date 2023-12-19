@@ -63,7 +63,10 @@ public class Reserva implements Serializable{
 	public void setFecha(Date fecha) {
 		this.fecha = fecha;
 	} // Debes crear una clase estática para la clave primaria compuesta
-    public static class ReservaId implements Serializable {
+	
+   
+
+	public static class ReservaId implements Serializable {
         private Ejemplar ejemplar;
         private Usuario usuario;
 

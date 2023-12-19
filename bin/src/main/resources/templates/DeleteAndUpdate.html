@@ -1,14 +1,44 @@
-<html>
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org">
 <head>
-    <title>Borrar o actualizar titulo</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>Borrar titulo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        .message {
+            color: black;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<head>
+    <title>Borrar </title>
 </head>
 <body style="background-color: #96adff;">
-<!--form action="borrar_o_actualizar_titulo.php" method="post"-->
-<h1>Borrar o actualizar titulo </h1>
-    <input type="text" name="id_titulo" placeholder="Identificador del titulo">
-    <input type="text" name="nuevo_nombre" placeholder="Nuevo nombre del titulo">
-    <input type="submit" value="Borrar">
-    <input type="submit" value="Actualizar">
+<form action="#" th:action="@{/DeleteAndUpdate}" th:object="${titulo}" method="post">
+    <h1>Borrar </h1>
+  <ul>
+            <li th:each="titulo : ${titulos}">
+                <label th:for="${'titulo_' + titulo.nombre}">
+                    <input type="radio" th:id="${'titulo_' + titulo.isbn}" th:name="tituloIsbn" th:value="${titulo.isbn}" />
+                    <span th:text="${titulo.isbn + ' - ' + titulo.nombre}" />
+                </label>
+            </li>
+        </ul>
+        <input type="submit" value="Borrar" />
+        <p class="message" th:if="${message}" th:text="${message}" id="message"></p>
+    </form>
+
+
 </form>
 </body>
 </html>

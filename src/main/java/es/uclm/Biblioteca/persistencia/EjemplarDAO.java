@@ -3,6 +3,7 @@ package es.uclm.Biblioteca.persistencia;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import es.uclm.Biblioteca.domain.entities.Ejemplar;
 import es.uclm.Biblioteca.domain.entities.Titulo;
+import jakarta.transaction.Transactional;
 
 
 @Repository
@@ -24,4 +26,8 @@ public interface EjemplarDAO extends JpaRepository<Ejemplar, Integer>{
 	public List<Ejemplar> findByPrestados();
 	@Query(value="SELECT * FROM Ejemplar e WHERE EXISTS (SELECT 1 FROM Prestamo p WHERE p.ejemplar_id = e.id AND p.ACTIVO=TRUE and p.usuario_id=:id_usuario)", nativeQuery = true)
 	public List<Ejemplar> findByPrestadosUsuario(int id_usuario);
+	@Modifying
+    @Query(value="DELETE FROM DERBYUSER.ejemplar WHERE ISBN_TITULO = :titulo_isbn", nativeQuery = true)
+    @Transactional
+	public int deleteByISBN(Long titulo_isbn);
 }

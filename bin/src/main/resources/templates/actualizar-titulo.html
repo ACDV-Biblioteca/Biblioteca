@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Actualizar Título</title>
+    <style>
+        /* Estilos CSS */
+    </style>
+</head>
+<body>
+    <h1>Actualizar Título</h1>
+    <form action="/actualizar-titulo" th:object="${Titulo}" method="post">
+        <p id="isbn"  name="isbn" th:text="'ISBN : ' + ${Titulo.isbn} "  /><br><br>
+
+        <input type="hidden" th:field="*{isbn}"  th:value="${Titulo.isbn}"/>
+		<label for="numReserva">Número de Reserva:</label><br>
+	    <input type="number" id="numReserva" th:field="*{numReserva}" th:value="${Titulo.numReserva}"/><br><br>
+		
+	    <label for="titulo">Título:</label><br>
+	    <input type="text" id="nombre" name="nombre" th:field="*{nombre}" th:value="${Titulo.nombre}"/><br><br>
+        <h3>Autores:</h3>
+        <ul id="autoresList">
+            <!-- Campos de entrada para autores -->
+            <li th:each="autor, iterStat : ${Titulo.autores}">
+               <input type="text" th:value="${autor.autor.nombre}" th:field="*{autores[__${iterStat.index}__].autor.nombre}" />
+				<input type="text" th:value="${autor.autor.apellidos}" th:field="*{autores[__${iterStat.index}__].autor.apellidos}" />
+
+				<button type="button" onclick="eliminarAutor(this)">Eliminar</button>
+                <br/>
+            </li>
+        </ul>
+
+        <button type="button" onclick="agregarAutor()">Añadir Autor</button>
+        <input type="submit" value="Actualizar">
+        <br><br><br><br>
+       <p class="message" th:if="${message}" th:text="${message}" id="message"></p>
+        
+    </form>
+
+    <script>
+        let indiceAutor = 0;
+
+        function agregarAutor() {
+            const listaAutores = document.getElementById('autoresList');
+            const nuevoAutor = document.createElement('li');
+            nuevoAutor.innerHTML = `
+                <input type="text" name="autores[${indiceAutor}].autor.nombre" />
+                <input type="text" name="autores[${indiceAutor}].autor.apellidos" />
+                <button type="button" onclick="eliminarAutor(this)">Eliminar</button>
+                <br/>
+            `;
+            listaAutores.appendChild(nuevoAutor);
+            indiceAutor++;
+        }
+
+        function eliminarAutor(botonEliminar) {
+            const listaAutores = document.getElementById('autoresList');
+            listaAutores.removeChild(botonEliminar.parentElement);
+        }
+    </script>
+</body>
+</html>

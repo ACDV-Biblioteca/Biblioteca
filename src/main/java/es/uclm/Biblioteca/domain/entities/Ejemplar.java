@@ -8,6 +8,7 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 
 import java.util.Collection;
+import java.util.List;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -28,9 +29,9 @@ public class Ejemplar {
 	
 	
 	@OneToMany(mappedBy = "ejemplar")
-    private Collection<Prestamo> prestamos;
+    private List<Prestamo> prestamos;
 	@OneToMany(mappedBy = "ejemplar")
-	private Collection<Reserva> reserva;
+	private List<Reserva> reserva;
 
 	public Ejemplar() {
 		super();
@@ -63,7 +64,7 @@ public class Ejemplar {
 
 	@Override
 	public String toString() {
-		return String.format("Ejemplar [id=%s, titulo=%s]", id, titulo.getTitulo());
+		return String.format("Ejemplar [id=%s, titulo=%s]", id, titulo.getNombre());
 	}
 
 }

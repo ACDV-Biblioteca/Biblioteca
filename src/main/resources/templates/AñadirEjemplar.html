@@ -24,10 +24,19 @@
 <div>
 	<form action="#" th:action="@{/AñadirEjemplar}" th:object="${titulo}" method="post">
 	<label for="ejemplarId">Introduce el Isbn del titulo para añadir el Ejemplar: </label>
-    <p>ISBN: <input type="number" th:field="*{isbn}" placeholder="Isbn del titulo" /></p>
-    <input type="submit" value="Añadir" />
+   
+    <ul>
+            <li th:each="titulo : ${titulos}">
+                <label th:for="${'titulo_' + titulo.nombre}">
+                    <input type="radio" th:id="${'titulo_' + titulo.isbn}" th:name="tituloIsbn" th:value="${titulo.isbn}" />
+                    <span th:text="${titulo.isbn + ' - ' + titulo.nombre}" />
+                </label>
+            </li>
+        </ul>
+         <input type="submit" value="Añadir" />
+         <a href="/PanelAdministrador">Atras</a>  
+         
     <p class="message" th:if="${message}" th:text="${message}" id="message"></p>
-    
      </form>
     
 

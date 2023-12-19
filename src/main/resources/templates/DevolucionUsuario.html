@@ -8,16 +8,20 @@
 <h1>Gestión de Devolución</h1>
 <p th:text="'Bienvenido: ' + ${session.usuario.nombre}"/>
 
-<form action="#" th:action="@{/DevolucionUsuario}" method="post">
-
-    <label >ISBN del Título:</label>
-    <input type="number" id="isbn" name="isbn"><br>
-
-    <label >ID del Ejemplar:</label>
-    <input type="number" id="ejemplarId" name="ejemplarId"><br>
-
-    <input type="submit" value="Realizar Devolución">
-    <p class="message" th:if="${message}" th:text="${message}" id="message"></p>
+<form action="#" th:action="@{/DevolucionUsuario}"  method="post">
+   <ul>
+            <li th:each="prestamo : ${prestamos}">
+                <label th:for="${'prestamo_' + prestamo.ejemplar.id}">
+                    <input type="radio" th:id="${'prestamo_' + prestamo.ejemplar.titulo.nombre }" th:name="prestamoEjemplarId" th:value="${prestamo.ejemplar.id}" />
+                    <span th:text="${prestamo.ejemplar.id + ' - ' + prestamo.ejemplar.titulo.nombre}" />
+                </label>
+            </li>
+        </ul>
+        <input type="submit" value="Realizar Devoulucion" />
+                 <a href="/PanelUsuario">Atras</a>  
+        
+        <p class="message" th:if="${message}" th:text="${message}" id="message"></p>
+    </form>
 
 </form>
 </body>

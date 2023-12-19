@@ -2,7 +2,7 @@
 <html xmlns:th="https://www.thymeleaf.org">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <title>Prestar Ejemplar</title>
+    <title>Borrar titulo</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -21,17 +21,26 @@
 </head>
 
 <head>
-    <title>Borrar o actualizar título</title>
+    <title>Borrar </title>
 </head>
 <body style="background-color: #96adff;">
 <form action="#" th:action="@{/DeleteAndUpdate}" th:object="${titulo}" method="post">
-    <h1>Borrar o actualizar título </h1>
-    <label for="ejemplarIsbn">ISBN del Ejemplar:</label>
-    <input type="number" th:field="*{isbn}" placeholder="ISBN del Ejemplar" required/>
-    <input type="submit" name="accion" value="Borrar">
+    <h1>Borrar </h1>
+  <ul>
+            <li th:each="titulo : ${titulos}">
+                <label th:for="${'titulo_' + titulo.nombre}">
+                    <input type="radio" th:id="${'titulo_' + titulo.isbn}" th:name="tituloIsbn" th:value="${titulo.isbn}" />
+                    <span th:text="${titulo.isbn + ' - ' + titulo.nombre}" />
+                </label>
+            </li>
+        </ul>
+        <input type="submit" value="Borrar" />
+        <a href="/PanelAdministrador">Atras</a>  
+        
+        <p class="message" th:if="${message}" th:text="${message}" id="message"></p>
+    </form>
 
 
 </form>
-<div th:if="${message}" class="message" th:text="${message}"></div>
 </body>
 </html>
