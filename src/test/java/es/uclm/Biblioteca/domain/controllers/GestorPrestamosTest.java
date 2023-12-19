@@ -27,6 +27,7 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -34,6 +35,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.Collections;
+
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -51,8 +53,7 @@ public class GestorPrestamosTest {
     private UsuarioDAO usuarioDAO;
     @Mock
     private PrestamoDAO prestamoDAO;
-
-    @Mock
+  @Mock
     private ReservaDAO reservaDAO;
 
     @Mock
@@ -71,17 +72,7 @@ public class GestorPrestamosTest {
         model = mock(Model.class);
 
 	}
-	@Test
-	public void showPrestarEjemplarPageUsuario() {
-	}
 
-	@Test
-	public void prestarEjemplarUsuario() {
-	}
-
-	@Test
-	public void showPrestarEjemplarPage() {
-	}
 
 	@Test
 	public void testPrestarEjemplar() {
@@ -111,25 +102,7 @@ public class GestorPrestamosTest {
         // Ajusta esto según cómo debería comportarse tu método
         verify(prestamoDAO).save(any(Prestamo.class));
 	}
-	@Test
-	public void mostrarFormularioDevolucionUsuario() {
-	}
 
-	@Test
-	public void realizarDevolucionUsuario() {
-	}
-
-	@Test
-	public void mostrarFormularioDevolucionBibliotecario() {
-	}
-
-	@Test
-	public void realizarDevolucionBibliotecario() {
-	}
-
-	@Test
-	public void mostrarListaYFormulario() {
-	}
 
 	@Test
 	public void testProcesarEjemplar() {
@@ -159,10 +132,82 @@ public class GestorPrestamosTest {
 	}
 
 	@Test
-	public void mostrarListaYFormularioUsuario() {
+	public void testProcesarEjemplarUsuario() {
+	    // Arrange
+	    Reserva reserva = new Reserva();
+	    String userId = "5";
+	    Integer ejemplarId = 1;
+	    Usuario usuario = new Usuario();
+	    usuario.setNombre("NombreUsuario");
+
+	    // Simular un escenario donde el usuario está presente en la sesión
+	    when(session.getAttribute("usuario")).thenReturn(usuario);
+
+	    // Simular una lista de ejemplares prestados
+	    List<Ejemplar> listaEjemplares = Arrays.asList(new Ejemplar(), new Ejemplar());
+	    when(ejemplarDAO.findByPrestados()).thenReturn(listaEjemplares);
+
+	    // Simular la búsqueda de un ejemplar por su ID
+	    Ejemplar ejemplar = new Ejemplar();
+	    when(ejemplarDAO.findById(ejemplarId)).thenReturn(Optional.of(ejemplar));
+
+	    // Act
+	    String result = gestorPrestamos.procesarEjemplarUsuario(reserva, userId, ejemplarId, model, session);
+
+	    // Assert
+	    // Verificar el caso de éxito cuando tanto el usuario como el ejemplar son válidos
+	    assertEquals("ReservarEjemplarUsuario", result);
+	    verify(model, times(1)).addAttribute(eq("reserva"), eq(reserva));
+	    verify(model, times(1)).addAttribute("ejemplares", listaEjemplares);
+	    verify(model, times(1)).addAttribute(eq("mensaje"), eq("Ejemplar "+ejemplarId+" seleccionado por el usuario NombreUsuario"));
+
+	    // Verificar el caso cuando el usuario no está presente en la sesión
+	    when(session.getAttribute("usuario")).thenReturn(null);
+	    result = gestorPrestamos.procesarEjemplarUsuario(reserva, userId, ejemplarId, model, session);
+	    assertEquals("ReservarEjemplarUsuario", result);
+	    verify(model, times(1)).addAttribute(eq("mensaje"), eq("El usuario no existe."));
+
+	    // Verificar el caso cuando el ejemplar no se encuentra en la base de datos
+	    when(session.getAttribute("usuario")).thenReturn(usuario);
+	    when(ejemplarDAO.findById(ejemplarId)).thenReturn(Optional.empty());
+	    result = gestorPrestamos.procesarEjemplarUsuario(reserva, userId, ejemplarId, model, session);
+	    assertEquals("ReservarEjemplarUsuario", result);
+	    verify(model, times(1)).addAttribute(eq("mensaje"), eq("El ejemplar con ID "+ejemplarId+" no existe"));
+
 	}
 
-	@Test
-	public void procesarEjemplarUsuario() {
-	}
-}
+
+
+    @Test
+    public void realizarDevolucionBibliotecario() {
+    			int idEjemplarExistente=2;
+    			int idEjemplarNoExistente=1234;
+    	        // Simular un prestamo existente
+    	        Prestamo prestamoExistente = new Prestamo();
+    	        Ejemplar ejemplar = new Ejemplar(); // Simula un Ejemplar
+    	        Usuario usuario = new Usuario(); // Simula un Usuario
+    	        Titulo titulo = new Titulo(); // Simula un Titulo
+    	        prestamoExistente.setEjemplar(ejemplar);
+    	        prestamoExistente.setUsuario(usuario);
+    	        prestamoExistente.setTitulo(titulo);
+    	        prestamoExistente.setFechaInicio(new Date());
+    	        prestamoExistente.setFechaFin(new Date());
+    	        prestamoExistente.setActivo(true);
+
+    	        // Simular comportamiento del prestamoDAO para un prestamo existente
+    	        when(prestamoDAO.findByEjemplarId(idEjemplarExistente)).thenReturn(prestamoExistente);
+
+    	        // Simular comportamiento del prestamoDAO para un prestamo que no existe
+    	        when(prestamoDAO.findByEjemplarId(idEjemplarNoExistente)).thenReturn(null); // ID de un préstamo que no existe
+
+    	        // Prueba del método con un prestamo existente
+    	        String resultadoExistente = gestorPrestamos.realizarDevolucionBibliotecario(idEjemplarExistente, model);
+    	        assertEquals("DevolucionEjemplar", resultadoExistente);
+
+    	        // Prueba del método con un prestamo que no existe
+    	        String resultadoNoExistente = gestorPrestamos.realizarDevolucionBibliotecario(idEjemplarNoExistente, model);
+    	        assertEquals("DevolucionEjemplar", resultadoNoExistente);
+    	    }
+    	}
+
+
