@@ -23,7 +23,7 @@ public class GestorLogin {
 	private static final Logger log = LoggerFactory.getLogger(GestorTitulos.class);
 
 	@Autowired
-	private UsuarioDAO usuariorDAO;
+	UsuarioDAO usuariorDAO;
 
 	@GetMapping("/pagina-de-inicio")
 	public String mostrarFormularioInicioSesion() {

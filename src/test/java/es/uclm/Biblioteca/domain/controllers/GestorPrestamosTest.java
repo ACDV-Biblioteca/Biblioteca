@@ -1,5 +1,25 @@
 package es.uclm.Biblioteca.domain.controllers;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.*;
+
+import java.util.Optional;
+
+import es.uclm.Biblioteca.domain.entities.Ejemplar;
+import es.uclm.Biblioteca.domain.entities.Prestamo;
+import es.uclm.Biblioteca.domain.entities.Usuario;
+import es.uclm.Biblioteca.persistencia.EjemplarDAO;
+import es.uclm.Biblioteca.persistencia.PrestamoDAO;
+import es.uclm.Biblioteca.persistencia.ReservaDAO;
+import es.uclm.Biblioteca.persistencia.UsuarioDAO;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.mock.web.MockHttpSession;
+import org.springframework.ui.Model;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
@@ -42,6 +62,7 @@ import java.util.Optional;
 
 import org.junit.Before;
 
+@RunWith(MockitoJUnitRunner.class)
 public class GestorPrestamosTest {
 	@Mock
     private EjemplarDAO ejemplarDAO;
@@ -55,23 +76,57 @@ public class GestorPrestamosTest {
     private PrestamoDAO prestamoDAO;
   @Mock
     private ReservaDAO reservaDAO;
+     @Mock
+    private HttpSession session;
+    @InjectMocks
+    private GestorPrestamos gestorPrestamos;
 
-    @Mock
+    private Model model;
+  @Mock
     private TituloAutorDAO tituloAutorDAO;
 
     @InjectMocks
     private GestorPrestamos gestorPrestamos;
-    
-    private Model model;
-    @Mock
-    private HttpSession session;
 
-	@Before
-    public void setup() {
-        MockitoAnnotations.initMocks(this); // Inicializar los mocks antes de cada prueba
+    @Before
+    public void setUp() {
         model = mock(Model.class);
+    }
 
-	}
+    @Test
+    public void testRealizarPrestamo_Success() {
+        // Mock data
+        Prestamo prestamo = new Prestamo();
+        int usuarioId = 1;
+        Ejemplar ejemplar = new Ejemplar();
+
+        // Mock behavior
+        when(usuarioDAO.getById(usuarioId)).thenReturn(new Usuario());
+       // when(ejemplarDAO.findById(anyInt())).thenReturn(Optional.of(ejemplar));
+        when(prestamoDAO.findCountPrestamosUsuario(anyInt())).thenReturn(0);
+        when(reservaDAO.deleteByEjemplar(anyInt())).thenReturn(0);
+
+        // Perform the test
+        gestorPrestamos.RealizarPrestamo(prestamo, usuarioId, model, ejemplar);
+
+        // Verify the results or behavior
+        verify(prestamoDAO).save(prestamo);
+        verify(model).addAttribute(eq("message"), eq("Préstamo realizado con éxito."));
+    }
+    @Test
+    public void testPrestarEjemplarUsuario() {
+        Model model = mock(Model.class);
+        MockHttpSession session = new MockHttpSession();
+        Usuario usuario = new Usuario();
+        session.setAttribute("usuario", usuario);
+
+        String result = gestorPrestamos.prestarEjemplarUsuario(new Prestamo(), 1, model, session);
+
+        assertEquals("PrestarEjemplarUsuario", result);
+    }
+
+
+}
 
 
 	@Test
@@ -88,6 +143,7 @@ public class GestorPrestamosTest {
         assertEquals("PrestarEjemplar", resultado);
     
 	}
+@Test
 	private void testRealizarPrestamo() {
 		 // Configurar comportamiento del mock de UsuarioDAO
         when(usuarioDAO.getById(anyInt())).thenReturn(new Usuario());

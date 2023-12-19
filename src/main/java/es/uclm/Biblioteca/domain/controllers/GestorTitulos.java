@@ -30,7 +30,7 @@ public class GestorTitulos {
 	@Autowired
 	private EjemplarDAO ejemplarDAO;
 	@Autowired
-	private TituloDAO tituloDAO;
+	public TituloDAO tituloDAO;
 	@Autowired
 	private TituloAutorDAO tituloAutorDAO;
 
